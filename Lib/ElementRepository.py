@@ -71,11 +71,6 @@ class qCalc:
     def B3(self, xi, eta):
         e = self.element
         B3 = np.zeros([4, e.totalDof])
-        # B3[0, 0::2] = e.dN_dxi(xi, eta)
-        # B3[1, 0::2] = e.dN_deta(xi, eta)
-        # B3[2, 1::2] = e.dN_dxi(xi, eta)
-        # B3[3, 1::2] = e.dN_deta(xi, eta)
-        
         B3[0, 0::2] = self.dN_dxi_vals(e, xi, eta)
         B3[1, 0::2] = self.dN_deta_vals(e, xi, eta)
         B3[2, 1::2] = self.dN_dxi_vals(e, xi, eta)
