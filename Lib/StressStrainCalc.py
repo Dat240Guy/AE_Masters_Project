@@ -2,18 +2,60 @@ import numpy as np
 import pandas as pd
 import ElementRepository as ER
 
+def EleLocalCoordCalc(Points):
+    zDir = np.array([0, 0, 1])
+    xDir = (Points[1] - Points[0]) / np.linalg.norm((Points[1] - Points[0]))
+    yDir = np.cross(xDir, zDir)
+    yDir = yDir/np.linalg.norm(yDir)
+    return xDir, yDir, zDir
+
+def RotMatrix(theta, ds):
+    c = np.cos(theta)
+    s = np.sin(theta)
+    if ds == "3d":
+        rot =  np.array([[c, -s, 0],
+                        [s, c, 0],
+                        [0, 0, 1]])
+    else: 
+        rot =  np.array([[c, -s],
+                        [s, c]])
+    return rot
+
+def stress_rot_matrix(theta):
+    c = np.cos(theta)
+    s = np.sin(theta)
+    c2, s2, cs = c*c, s*s, c*s
+    return np.array([
+        [ c2,   s2,   2*cs],
+        [ s2,   c2,  -2*cs],
+        [-cs,   cs,  c2 - s2],
+    ])
+
+
 def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
     if planeType == "PlaneStrain":
         C = ER.PlaneStrain(E, v, t).Array
     elif planeType == "PlaneStress":
         C = ER.PlaneStress(E, v, t).Array
     
+    
+    eleX, eleY, eleZ = EleLocalCoordCalc(Points)
+    theta = np.arctan2(eleX[1], eleX[0])
+    print("Theta Rotation in Degrees: ", np.degrees(theta))
+    PointsLocal = np.empty_like(Points)
+    for i, point in enumerate(Points):
+        PointsLocal[i, :] = RotMatrix(-theta, "3d") @ point
+    
+    dispLocal = np.empty_like(disp)
+    for i in range(int(len(dispLocal)/2)):
+        dispLocal[i*2:i*2+2] = RotMatrix(theta, "2d") @ disp[i*2:i*2+2]
+        
     if len(Points) == 4:
-        element = ER.q4(Points, ID = ID)
+        element = ER.q4(PointsLocal, ID = ID)
     elif len(Points) == 8:
-        element = ER.q8(Points, ID = ID)
+        element = ER.q8(PointsLocal, ID = ID)
     elif len(Points) == 7:
-        element = ER.q7(Points, ID = ID)
+        element = ER.q7(PointsLocal, ID = ID)
     else:
         raise ValueError("Element type not recognized for Ke Calculation")
     
@@ -21,6 +63,8 @@ def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
     n_nodes = element.nodeCount
     nodalStrain = np.zeros((n_nodes, 3)) #Empty arrays to fill
     nodalStress = np.zeros((n_nodes, 3)) #Empty arrays to fill
+    nodalStrainGlobal = np.zeros((n_nodes, 3)) #Empty arrays to fill
+    nodalStressGlobal = np.zeros((n_nodes, 3)) #Empty arrays to fill
     
     
     #looping through the xi, eta points in the natrual coord sys to calculate strain/stress 
@@ -35,7 +79,10 @@ def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
         B = eB1 @ eB2 @ eB3
         nodalStrain[p, :] += ((B @ disp).transpose())[0]  # global strain
         nodalStress[p, :] += ((C @ (B @ disp)).transpose())[0] # global stress
-    return nodalStrain, nodalStress
+        T = stress_rot_matrix(-theta)
+        nodalStrainGlobal[p, :] += T @ nodalStrain[p, :]
+        nodalStressGlobal[p, :] += T @ nodalStress[p, :]
+    return nodalStrainGlobal, nodalStressGlobal
 
 def StressStrainCalc(dfEles, eTypes, dfDisp, dfNodes, planeType, dfMatProps):
     dfStress = pd.DataFrame(columns=["Element", "Node", "S1", "S2", "S12"])

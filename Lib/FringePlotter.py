@@ -17,7 +17,9 @@ def Contour(dfNodes, dfValues, Components):
     triang = tri.Triangulation(coords[:,0], coords[:,1])
     for comp in Components:
         plt.tricontourf(triang, df[comp+"_Avg"].to_numpy(), cmap = "jet", levels = 12)
-        plt.title = comp + "_Avg"
+        plt.title(comp + "_Avg")
+        plt.gca().ticklabel_format(style='plain')
+
         plt.colorbar()
         plt.show(block = True)
     

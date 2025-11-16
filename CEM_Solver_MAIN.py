@@ -24,9 +24,12 @@ if __name__ == "__main__":
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Sinlge_Ele_Natural_Sys\Single_Ele_Natural_SYS-0004.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Sinlge_Ele_Natural_Sys\Single_Ele_Natural_SYS-0005.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Sinlge_Ele_Origin\SingleEle_Translated-0000.dat"
-    File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Sinlge_Ele_Origin\SingleEle_Translated_Rotated-0000.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Sinlge_Ele_Origin\SingleEle_Translated_Rotated-0000.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Sinlge_Ele_Origin\SingleEle_Translated_Rotated_180-0000.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Sinlge_Ele_Origin\SingleEle_Translated_Rotated_270-0000.dat"
+    
+    File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Single_45_Element\Pos45-0001.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Single_45_Element\Neg45-0000.dat"
     
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Sinlge_Ele_Origin\SingleEle_Translated_Skewed-0000.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Sinlge_Ele_Origin\SingleEle_Translated_Skewed_4ELe-0001.dat"
