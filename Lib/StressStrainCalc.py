@@ -21,7 +21,7 @@ def RotMatrix(theta, ds):
                         [s, c]])
     return rot
 
-def stress_rot_matrix(theta):
+def stressRotMatrix(theta):
     c = np.cos(theta)
     s = np.sin(theta)
     c2, s2, cs = c*c, s*s, c*s
@@ -31,6 +31,27 @@ def stress_rot_matrix(theta):
         [-cs,   cs,  c2 - s2],
     ])
 
+def maxPrinCalc(df, Type):
+    if Type == "Stress":
+        Prefix = "S"
+    else:
+        Prefix = "E"
+        
+    S1 = df[Prefix + "1"].values
+    S2 = df[Prefix + "2"].values
+    S12 = df[Prefix + "12"].values   # engineering shear
+
+    # Convert engineering shear → tensor shear τxy
+    tau = S12 / 2.0
+
+    # Principal value formula
+    avg = 0.5 * (S1 + S2)
+    rad = np.sqrt(((S1 - S2) / 2.0)**2 + tau**2)
+
+    df[Prefix + "_max"] = avg + rad
+    df[Prefix + "_min"] = avg - rad  # optional, but helpful
+
+    return df
 
 def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
     if planeType == "PlaneStrain":
@@ -38,17 +59,16 @@ def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
     elif planeType == "PlaneStress":
         C = ER.PlaneStress(E, v, t).Array
     
-    
     eleX, eleY, eleZ = EleLocalCoordCalc(Points)
     theta = np.arctan2(eleX[1], eleX[0])
-    print("Theta Rotation in Degrees: ", np.degrees(theta))
+    # print("Theta Rotation in Degrees: ", np.degrees(theta))
     PointsLocal = np.empty_like(Points)
     for i, point in enumerate(Points):
         PointsLocal[i, :] = RotMatrix(-theta, "3d") @ point
     
     dispLocal = np.empty_like(disp)
     for i in range(int(len(dispLocal)/2)):
-        dispLocal[i*2:i*2+2] = RotMatrix(theta, "2d") @ disp[i*2:i*2+2]
+        dispLocal[i*2:i*2+2] = RotMatrix(-theta, "2d") @ disp[i*2:i*2+2]
         
     if len(Points) == 4:
         element = ER.q4(PointsLocal, ID = ID)
@@ -72,21 +92,21 @@ def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
     for  p, (xiCalc, etaCalc) in enumerate(element.localCoord):
         # print("xiCalc", xiCalc, "etaCalc", etaCalc)
         jacb = calc.jacobian(element, xiCalc, etaCalc)
-        print(jacb.J)
+        # print(jacb.J)
         eB1 = calc.B1()
         eB2 = calc.B2(jacb)
         eB3 = calc.B3(xiCalc, etaCalc)
         B = eB1 @ eB2 @ eB3
-        nodalStrain[p, :] += ((B @ disp).transpose())[0]  # global strain
-        nodalStress[p, :] += ((C @ (B @ disp)).transpose())[0] # global stress
-        T = stress_rot_matrix(-theta)
+        nodalStrain[p, :] += ((B @ dispLocal).transpose())[0]  # global strain
+        nodalStress[p, :] += ((C @ (B @ dispLocal)).transpose())[0] # global stress
+        T = stressRotMatrix(-theta)
         nodalStrainGlobal[p, :] += T @ nodalStrain[p, :]
         nodalStressGlobal[p, :] += T @ nodalStress[p, :]
     return nodalStrainGlobal, nodalStressGlobal
 
 def StressStrainCalc(dfEles, eTypes, dfDisp, dfNodes, planeType, dfMatProps):
-    dfStress = pd.DataFrame(columns=["Element", "Node", "S1", "S2", "S12"])
-    dfStrain = pd.DataFrame(columns=["Element", "Node", "E1", "E2", "E12"])
+    # dfStress = pd.DataFrame(columns=["Element", "Node", "S1", "S2", "S12"])
+    # dfStrain = pd.DataFrame(columns=["Element", "Node", "E1", "E2", "E12"])
     
     for df, elementType in zip(dfEles, eTypes):
         for index, row in df.iterrows():
@@ -111,9 +131,11 @@ def StressStrainCalc(dfEles, eTypes, dfDisp, dfNodes, planeType, dfMatProps):
             E = dfMatProps[dfMatProps["PID"] == row["Prop"]]["E"].values[0]
             v = dfMatProps[dfMatProps["PID"] == row["Prop"]]["NU"].values[0]
             t = dfMatProps[dfMatProps["PID"] == row["Prop"]]["T"].values[0]
-            nStrain, nStress = SSEleCalc(points, uElement, "PlaneStress", E, v, t)
+            if row["Enumber"] == 15484:
+                pass
+            nStrain, nStress = SSEleCalc(points, uElement, planeType, E, v, t, row["Enumber"])
             for i in range(len(Ns)):
-                if i == 0 and dfEles.index(df) == 0 and index == 0:
+                if i == 0 and eTypes.index(elementType) == 0 and index == 0:
                     dfStress = pd.DataFrame([[row["Enumber"], row[f"N{i+1}"], nStress[i,0], nStress[i,1], nStress[i,2]]], columns=["Element", "NID", "S1", "S2", "S12"])
                     dfStrain = pd.DataFrame([[row["Enumber"], row[f"N{i+1}"], nStrain[i,0], nStrain[i,1], nStrain[i,2]]], columns=["Element", "NID", "E1", "E2", "E12"])
                 else:
@@ -122,6 +144,10 @@ def StressStrainCalc(dfEles, eTypes, dfDisp, dfNodes, planeType, dfMatProps):
                     dfnStrain = pd.DataFrame([[row["Enumber"], row[f"N{i+1}"], nStrain[i,0], nStrain[i,1], nStrain[i,2]]], columns=["Element", "NID", "E1", "E2", "E12"])
                     dfStrain = pd.concat([dfStrain, dfnStrain], ignore_index=True) 
           
-    dfStress = dfStress.astype({"Element":int, "S1":float, "S2":float, "S12":float}).sort_values(by=["Element"])
-    dfStrain = dfStrain.astype({"Element":int, "E1":float, "E2":float, "E12":float}).sort_values(by=["Element"])            
+    dfStress = dfStress.astype({"Element":int, "NID":int, "S1":float, "S2":float, "S12":float}).sort_values(by=["Element"])
+    dfStrain = dfStrain.astype({"Element":int, "NID":float, "E1":float, "E2":float, "E12":float}).sort_values(by=["Element"])            
+    dfStress = maxPrinCalc(dfStress, "Stress") 
+    dfStrain = maxPrinCalc(dfStrain, "Strain")
     return dfStress, dfStrain
+
+# def MaxPrinCalc(df):

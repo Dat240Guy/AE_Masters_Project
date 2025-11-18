@@ -42,16 +42,17 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
                 if ndict[int(n)]["totalCount"] == 2: #Coner node that only attaches two 2 elements is at a free edge
                     freeEdgeNodes.append(n)
         #Determinig the two corner nodes that lie on the free edge to find the corresponding free midside node
-        if e.index(freeEdgeNodes[0]) == 0 and e.index(freeEdgeNodes[1]) == 1:
-            freeEdgeMidNodes = e[4]
-        elif e.index(freeEdgeNodes[0]) == 1 and e.index(freeEdgeNodes[1]) == 2:
-            freeEdgeMidNodes = e[5]
-        elif e.index(freeEdgeNodes[0]) == 2 and e.index(freeEdgeNodes[1]) == 3:
-            freeEdgeMidNodes = e[6]
-        elif e.index(freeEdgeNodes[0]) == 3 and e.index(freeEdgeNodes[1]) == 0:
-            freeEdgeMidNodes = e[7]
-        elif e.index(freeEdgeNodes[0]) == 0 and e.index(freeEdgeNodes[1]) == 3:
-            freeEdgeMidNodes = e[7]
+        if len(freeEdgeNodes) > 0:
+            if e.index(freeEdgeNodes[0]) == 0 and e.index(freeEdgeNodes[1]) == 1:
+                freeEdgeMidNodes = e[4]
+            elif e.index(freeEdgeNodes[0]) == 1 and e.index(freeEdgeNodes[1]) == 2:
+                freeEdgeMidNodes = e[5]
+            elif e.index(freeEdgeNodes[0]) == 2 and e.index(freeEdgeNodes[1]) == 3:
+                freeEdgeMidNodes = e[6]
+            elif e.index(freeEdgeNodes[0]) == 3 and e.index(freeEdgeNodes[1]) == 0:
+                freeEdgeMidNodes = e[7]
+            elif e.index(freeEdgeNodes[0]) == 0 and e.index(freeEdgeNodes[1]) == 3:
+                freeEdgeMidNodes = e[7]
         '''
         Determining the extra node of the CQ8 element that is not connected to any other elements
         and not on a free edge. This node is deleted and the 7 remaining nodes are the 7 nodes
@@ -78,12 +79,12 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
     for eA, eB in zip(e7Common, e7):
         e7Final.append(["CQUAD7", eA[1], eA[2]] + eB) #Re-assembling the full CQ7 Element Card
     if e7 != []:
-        dfEle7 = pd.DataFrame(e7, columns= ["Type", "Enumber", "Prop", "N1", "N2", "N3", "N4", "N5", "N6", "N7"])
+        dfEle7 = pd.DataFrame(e7Final, columns= ["Type", "Enumber", "Prop", "N1", "N2", "N3", "N4", "N5", "N6", "N7"])
         dfEle7 = dfEle7.astype({"Type": str, "Enumber":int, "Prop":int, "N1":int, "N2":int, "N3":int, "N4": int,
                             "N5":int, "N6":int, "N7":int})
     lenDFNodes = len(dfNodes)
     dfNodes = dfNodes[~dfNodes["N"].isin([nFree])]
-    if lenDFNodes == len(dfNodes) and dfEle7 != None:
+    if lenDFNodes == len(dfNodes) and isinstance(dfEle7, pd.DataFrame):
         RuntimeWarning("I do not believe the free nodes have been removed properly ")
     
     return dfEle7, dfEle6, dfNodes
@@ -148,6 +149,11 @@ def DatFileParsing(dat):
 
     cTypes = {"Type": str, "SID":int, "Comp":int, "NID":int}
     dfConstraints = pd.DataFrame(constraints, columns = cTypes).astype(cTypes)
+    
+    if len(dfEle4) == 0:
+        dfEle4 = None
+    if len(dfEle8) == 0:
+        dfEle8 = None
     
     dOut = [dfNodes, dfEle4, dfEle6, dfEle7, dfEle8, 
             dfMatProps, dfForces, dfConstraints]

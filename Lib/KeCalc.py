@@ -26,8 +26,8 @@ def KeCalc(Points, planeType, E, v, t, ID = None):
     for i, xi in enumerate(xiIntegrationPoints):
         for j, eta in enumerate(etaIntegrationPoints):
             jacb = calc.jacobian(element, xi, eta)
-            print("Jacobian of element ", ID, "is: \n", jacb.J)
-            print("det of the Jacobnian for element ", ID, " is= ", jacb.det)
+            # print("Jacobian of element ", ID, "is: \n", jacb.J)
+            # print("det of the Jacobnian for element ", ID, " is= ", jacb.det)
             eB1 = calc.B1() # strain displacement relation, relating the derivatives of displacement with resepct to the dofs to the components of strain
             eB2 = calc.B2(jacb) # Scalling matrix containing the inverse jacobian transposed
             eB3 = calc.B3(xi, eta) # Matrix of derivates of the shape functions with respect to xi and eta
@@ -91,7 +91,7 @@ def globalKCalc(KGlobal, dfEle, dfNodes, dfMatProps, elementType):
                 #     # KGTemp[A, B] += Ke[a, b] # Used for debugging 
                 KGlobal[A, B] += Ke[a, b]
                 KGTemp[A, B] += Ke[a, b]
-        print("Done Ke Calc")
+        # print("Done Ke Calc")
 
     # KGlobal = KGlobal + KGlobal.T - np.diag(KGlobal.diagonal()) # Used for debugging populates the entire matrix
     return KGlobal
