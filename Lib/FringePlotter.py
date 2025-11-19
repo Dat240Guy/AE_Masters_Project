@@ -100,45 +100,138 @@ def build_triangles_from_elements(df_nodes_merged, dfEles):
 # Contour function: triangulation only over actual elements
 # ------------------------------------------------------------
 
-def Contour(dfNodes, dfValues, Components, dfEles):
+# def Contour(dfNodes, dfValues, Components, dfEles):
+#     """
+#     dfNodes   : DataFrame with columns N, XYZ
+#     dfValues  : DataFrame with columns NID, component fields (e.g. S1, S2, S12, ...)
+#     Components: list of strings, names of fields to contour (e.g. ["S1", "S_max"])
+#     dfEles    : [dfEle4, dfEle8, dfEle7, dfEle6, ...] element dataframes
+
+#     This builds a triangulation from the real FE connectivity, so
+#     contours are drawn only over meshed regions (holes stay empty).
+#     """
+
+#     # Merge values onto nodes
+#     df = dfNodes.merge(dfValues, how="inner", left_on="N", right_on="NID")
+
+#     # Nodal averaging (in case multiple element contributions per node)
+#     for comp in Components:
+#         df[comp + "_Avg"] = df.groupby("N")[comp].transform("mean")
+
+#     # One row per node
+#     df = df.drop_duplicates("N")
+
+#     # Build triangles directly from element connectivity
+#     coords, triangles = build_triangles_from_elements(df, dfEles)
+
+#     # Custom triangulation (no Delaunay fill)
+#     triang = tri.Triangulation(coords[:, 0], coords[:, 1], triangles=triangles)
+
+#     # Plot for each requested component
+#     for comp in Components:
+#         z = df[comp + "_Avg"].to_numpy()
+
+#         plt.figure()
+#         plt.tricontourf(triang, z, levels=14, cmap="jet")
+#         plt.title(comp + "_Avg")
+#         plt.gca().ticklabel_format(style="plain")
+#         plt.colorbar()
+#         plt.axis("equal")
+#         plt.show(block=True)
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.tri as tri
+
+
+def Contour(dfNodes, dfValues, Components, dfEles, Averaging="Nodal"):
     """
-    dfNodes   : DataFrame with columns N, XYZ
-    dfValues  : DataFrame with columns NID, component fields (e.g. S1, S2, S12, ...)
-    Components: list of strings, names of fields to contour (e.g. ["S1", "S_max"])
-    dfEles    : [dfEle4, dfEle8, dfEle7, dfEle6, ...] element dataframes
-
-    This builds a triangulation from the real FE connectivity, so
-    contours are drawn only over meshed regions (holes stay empty).
+    dfNodes     : DataFrame with columns [N, XYZ]
+    dfValues    : DataFrame with columns [NID, S1, S2, S12, ...]
+    Components  : list of field names to contour (e.g ["S1", "S2", "S12"])
+    dfEles      : list of element DataFrames (CQ4, CQ8, CQ7...)
+    Averaging   : "Nodal" or "Elemental"
     """
 
-    # Merge values onto nodes
-    df = dfNodes.merge(dfValues, how="inner", left_on="N", right_on="NID")
+    # ------------------------------------------------------------
+    # 1. Build CONNECTIVITY for triangulation (triangles list)
+    # ------------------------------------------------------------
+    coords, triangles = build_triangles_from_elements(dfNodes, dfEles)
 
-    # Nodal averaging (in case multiple element contributions per node)
+    # ------------------------------------------------------------
+    # 2. Inherit XYZ coordinates from dfNodes
+    # ------------------------------------------------------------
+    XY = np.vstack(dfNodes["XYZ"].values)
+    X = XY[:, 0]
+    Y = XY[:, 1]
+
+    # ------------------------------------------------------------
+    # 3. Compute field values depending on averaging mode
+    # ------------------------------------------------------------
+    if Averaging == "Nodal":
+        df = dfNodes.merge(dfValues, how="inner", left_on="N", right_on="NID")
+
+        for comp in Components:
+            df[comp + "_Plot"] = df.groupby("N")[comp].transform("mean")
+
+        df = df.drop_duplicates("N")  # one row per node, with averaged values
+        Zfields = {comp: df[comp + "_Plot"].to_numpy() for comp in Components}
+
+        triang = tri.Triangulation(X, Y, triangles=triangles)
+
+    # ------------------------------------------------------------
+    # ELEMENTAL AVERAGING
+    # ------------------------------------------------------------
+    elif Averaging == "Elemental":
+
+        ele_centroids = []
+        ele_fields = {comp: [] for comp in Components}
+
+        for dfEle in dfEles:
+            for _, row in dfEle.iterrows():
+                # Node IDs for this element
+                nid_list = []
+                for c in row.index:
+                    if c.startswith("N") and c[1:].isdigit():
+                        nid_list.append(row[c])
+
+                # Coordinates
+                pts = np.vstack(dfNodes[dfNodes["N"].isin(nid_list)]["XYZ"])
+
+                # Element centroid
+                centroid = pts[:, :2].mean(axis=0)
+                ele_centroids.append(centroid)
+
+                # Element-averaged values
+                df_sub = dfValues[dfValues["NID"].isin(nid_list)]
+                for comp in Components:
+                    ele_fields[comp].append(df_sub[comp].mean())
+
+        ele_centroids = np.array(ele_centroids)
+        Xc = ele_centroids[:, 0]
+        Yc = ele_centroids[:, 1]
+
+        # Delaunay triangulation on element centroids only
+        triang = tri.Triangulation(Xc, Yc)
+
+        Zfields = {comp: np.array(vals) for comp, vals in ele_fields.items()}
+
+    else:
+        raise ValueError('Averaging must be "Nodal" or "Elemental"')
+
+    # ------------------------------------------------------------
+    # 4. Make contour plots
+    # ------------------------------------------------------------
     for comp in Components:
-        df[comp + "_Avg"] = df.groupby("N")[comp].transform("mean")
-
-    # One row per node
-    df = df.drop_duplicates("N")
-
-    # Build triangles directly from element connectivity
-    coords, triangles = build_triangles_from_elements(df, dfEles)
-
-    # Custom triangulation (no Delaunay fill)
-    triang = tri.Triangulation(coords[:, 0], coords[:, 1], triangles=triangles)
-
-    # Plot for each requested component
-    for comp in Components:
-        z = df[comp + "_Avg"].to_numpy()
+        Z = Zfields[comp]
 
         plt.figure()
-        plt.tricontourf(triang, z, levels=14, cmap="jet")
-        plt.title(comp + "_Avg")
+        plt.tricontourf(triang, Z, levels=14, cmap="jet")
+        plt.title(f"{comp} ({Averaging} Avg)")
         plt.gca().ticklabel_format(style="plain")
         plt.colorbar()
         plt.axis("equal")
         plt.show(block=True)
-
 
 
 

@@ -152,8 +152,6 @@ def DatFileParsing(dat):
     
     if len(dfEle4) == 0:
         dfEle4 = None
-    if len(dfEle8) == 0:
-        dfEle8 = None
     
     dOut = [dfNodes, dfEle4, dfEle6, dfEle7, dfEle8, 
             dfMatProps, dfForces, dfConstraints]
