@@ -18,7 +18,8 @@ def resultsDir(file):
     return newFolder
 
 if __name__ == "__main__":
-    ''' OLD 
+    print("welcome")
+
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Sinlge_Ele_Natural_Sys\Single_Ele_Natural_SYS-0000.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Sinlge_Ele_Natural_Sys\Single_Ele_Natural_SYS-0001.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Sinlge_Ele_Natural_Sys\Single_Ele_Natural_SYS-0002.dat"
@@ -41,17 +42,16 @@ if __name__ == "__main__":
     
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\SimplePlateModel\SimplePlateModel-0000.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\SimplePlateModel\SimplePlateModel_CQ8-0000.dat"
-    '''
 
     
     '''Hole in Plate Models'''
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\HoleInPlate\HoleInPlate-0001.dat"
-    # File = r"C:\Documents\Grad_School\MastersFinalProject\CodeBase\Nastran\Final_Models\Hole_In_Square_Plate\MyFEM\My_Hole_In_Square_Plate.dat"
+    File = r"C:\Documents\Grad_School\MastersFinalProject\CodeBase\Nastran\Final_Models\Hole_In_Square_Plate\MyFEM\My_Hole_In_Square_Plate.dat"
     
     '''Compounding Tension Strip Models'''
     #PyDFEM Model
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM.dat"
-    File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM_Refined_GoodBoundary.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM_Refined_GoodBoundary.dat"
     
     ''' Creating Results Dir '''
     outDir = resultsDir(File)
