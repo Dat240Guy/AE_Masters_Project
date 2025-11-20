@@ -88,10 +88,11 @@ def KeCalc(Points, planeType, E, v, t, ID=None):
         w_center = 4.0  # area of [-1,1]x[-1,1] square
 
         jacb_c = calc.jacobian(element, xi_c, eta_c)
-        eB1 = calc.B1()
-        eB2 = calc.B2(jacb_c)
-        eB3 = calc.B3(xi_c, eta_c)
-        Bc = eB1 @ eB2 @ eB3
+        # eB1 = calc.B1()
+        # eB2 = calc.B2(jacb_c)
+        # eB3 = calc.B3(xi_c, eta_c)
+        # Bc = eB1 @ eB2 @ eB3
+        Bc = calc.B(xi_c, eta_c, jacb_c)
         kTemp = Bc.T @ C_vol @ Bc * jacb_c.det * w_center
         Ke += Bc.T @ C_vol @ Bc * jacb_c.det * w_center
 
@@ -115,11 +116,11 @@ def KeCalc(Points, planeType, E, v, t, ID=None):
         for j, eta in enumerate(element.etaIntegrationPoints):
             jacb = calc.jacobian(element, xi, eta)
 
-            eB1 = calc.B1()
-            eB2 = calc.B2(jacb)
-            eB3 = calc.B3(xi, eta)
-            B = eB1 @ eB2 @ eB3
-
+            # eB1 = calc.B1()
+            # eB2 = calc.B2(jacb)
+            # eB3 = calc.B3(xi, eta)
+            # B = eB1 @ eB2 @ eB3
+            B = calc.B(xi, eta, jacb)
             Ke += (
                 B.T @ C @ B
                 * jacb.det

@@ -41,8 +41,8 @@ if __name__ == "__main__":
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\SimplePlateModel\SimplePlateModel-0000.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\SimplePlateModel\SimplePlateModel_CQ8-0000.dat"
     
-    File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\HoleInPlate\HoleInPlate-0000.dat"
-    # File = r"C:\Documents\Grad_School\MastersFinalProject\CodeBase\Nastran\Final_Models\Hole_In_Square_Plate\MyFEM\My_Hole_In_Square_Plate.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\HoleInPlate\HoleInPlate-0001.dat"
+    File = r"C:\Documents\Grad_School\MastersFinalProject\CodeBase\Nastran\Final_Models\Hole_In_Square_Plate\MyFEM\My_Hole_In_Square_Plate.dat"
     
     ''' Creating Results Dir '''
     outDir = resultsDir(File)
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     Contour(dfNodes, dfDisp, ["U1", "U2"], dfEles)
     # # Contour(dfNodes, dfStrain, ["E1", "E_max"], dfEles)
     # Contour(dfNodes, dfStress, ["S1", "S2", "S12", "S_max"], dfEles)
-    Contour(dfNodes, dfStress, ["S1", "S2", "S12", "S_max"], dfEles, Averaging="Elemental")
+    Contour(dfNodes, dfStress, ["S1", "S2", "S12", "S_max"], dfEles, Averaging="Nodal")
     
     # holeNodeIDs = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 37, 41, 44, 47, 50, 53, 56, 59, 62, 65, 68, 
     #                71, 74, 77, 80, 83, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 116, 119, 122, 
@@ -82,6 +82,6 @@ if __name__ == "__main__":
                    29151, 29152, 29153, 29154, 29155, 29156, 29157, 29158, 29159, 29160, 29161, 29162, 29163, 29164]
 
 
-    dfOut = rThetaStress(dfNodes, dfStress, hole_center = np.array([3.0, 3.0]), hole_node_ids = holeNodeIDs)
+    # dfOut = rThetaStress(dfNodes, dfStress, hole_center = np.array([3.0, 3.0]), hole_node_ids = holeNodeIDs)
     
     print("stop")

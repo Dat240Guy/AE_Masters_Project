@@ -92,13 +92,15 @@ def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
     for  p, (xiCalc, etaCalc) in enumerate(element.localCoord):
         # print("xiCalc", xiCalc, "etaCalc", etaCalc)
         jacb = calc.jacobian(element, xiCalc, etaCalc)
-        # print(jacb.J)
-        eB1 = calc.B1()
-        eB2 = calc.B2(jacb)
-        eB3 = calc.B3(xiCalc, etaCalc)
-        B = eB1 @ eB2 @ eB3
-        nodalStrain[p, :] += ((B @ dispLocal).transpose())[0]  # global strain
-        nodalStress[p, :] += ((C @ (B @ dispLocal)).transpose())[0] # global stress
+        B = calc.B(xiCalc, etaCalc, jacb)
+
+        eps = (B @ dispLocal).reshape(-1)        # [εx, εy, γxy]
+        sig = (C @ (B @ dispLocal)).reshape(-1)  # [σx, σy, τxy]
+
+        nodalStrain[p, :] += eps
+        nodalStress[p, :] += sig
+
+        # Rotation to global if you decide to re-enable theta:
         T = stressRotMatrix(-theta)
         nodalStrainGlobal[p, :] += T @ nodalStrain[p, :]
         nodalStressGlobal[p, :] += T @ nodalStress[p, :]
