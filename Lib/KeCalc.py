@@ -55,52 +55,9 @@ def KeCalc(Points, planeType, E, v, t, ID=None):
     else:
         raise ValueError("planeType must be 'PlaneStress' or 'PlaneStrain'")
 
-    # --- 4-noded quad: selective / reduced integration ---
+    
     if Points.shape[0] == 4:
         element = ER.q4(Points, ID=ID)
-        calc = ER.qCalc(element)
-
-        # Split into volumetric + deviatoric
-        C_vol, C_dev = _split_constitutive_2d(C, planeType, E, v)
-
-        Ke = np.zeros((element.totalDof, element.totalDof))
-
-        # 1) Deviatoric part: full 2x2 integration (same points as before)
-        for i, xi in enumerate(element.xiIntegrationPoints):
-            for j, eta in enumerate(element.etaIntegrationPoints):
-                jacb = calc.jacobian(element, xi, eta)
-
-                # eB1 = calc.B1()
-                # eB2 = calc.B2(jacb)
-                # eB3 = calc.B3(xi, eta)
-                # B = eB1 @ eB2 @ eB3
-                B = calc.B(xi, eta, jacb)
-                Ke += (
-                    B.T @ C_dev @ B
-                    * jacb.det
-                    * element.Weights[i]
-                    * element.Weights[j]
-                )
-
-        # 2) Volumetric part: 1-point integration at the center (xi=0, eta=0)
-        xi_c = 0.0
-        eta_c = 0.0
-        w_center = 4.0  # area of [-1,1]x[-1,1] square
-
-        jacb_c = calc.jacobian(element, xi_c, eta_c)
-        # eB1 = calc.B1()
-        # eB2 = calc.B2(jacb_c)
-        # eB3 = calc.B3(xi_c, eta_c)
-        # Bc = eB1 @ eB2 @ eB3
-        Bc = calc.B(xi_c, eta_c, jacb_c)
-        kTemp = Bc.T @ C_vol @ Bc * jacb_c.det * w_center
-        Ke += Bc.T @ C_vol @ Bc * jacb_c.det * w_center
-
-        # Thickness
-        Ke *= t
-        return Ke
-
-    # --- 8-noded, 7-noded quads: keep existing full integration ---
     elif Points.shape[0] == 8:
         element = ER.q8(Points, ID=ID)
     elif Points.shape[0] == 7:
