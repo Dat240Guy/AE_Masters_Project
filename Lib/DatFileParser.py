@@ -29,8 +29,24 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
     
     nCommon = {x: ndict[x] for x in ndict.keys() if ndict[x]["n8Count"] > 0 and ndict[x]["n4Count"] > 0} # Finding the common nodes between cq4 and cq8 elements
     e7Common = [ele for ele in e8 if any(str(n) in ele[3:11] for n in nCommon.keys())] # Finding the cq8 elements with the nCommon nodes
+    eTemp = []
     
-    #routine to find the e7 nodes
+    # Filtering e7Common elements that are not actually e7 elements but e8 elemetns at the boundary 
+    for i, e in enumerate(e7Common):
+        count = 0
+        for n in e[3:11]:
+            try: 
+                n4Count = ndict[int(n)]["n4Count"]
+                if n4Count >= 2:
+                    count += 1
+            except: 
+                pass
+        if count >= 3:
+            pass
+        else:
+            eTemp.append(e)
+    e7Common = eTemp
+    #routine to find the e7 nodes (Need to filter for free nodes that are c/t to the part edge)
     e7, nFree = [], []
     for i, e in enumerate(e7Common):
         efull = e

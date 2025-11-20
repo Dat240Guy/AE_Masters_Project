@@ -244,3 +244,39 @@ class q7:
         self.xiIntegrationPoints = [-np.sqrt(3/5), 0, np.sqrt(3/5)]
         self.etaIntegrationPoints = [-np.sqrt(3/5), 0, np.sqrt(3/5)]
         self.Weights = [5/9, 8/9, 5/9]
+        
+        
+class t3:
+    def __init__(self, Points, ID=None):
+        self.ID = ID
+        self.nodeCount = 3
+        self.totalDof = 2 * self.nodeCount
+        self.Points = np.array(Points, dtype=float)
+
+        # One-point full integration in area coords (constant strain triangle)
+        self.xiIntegrationPoints  = [1.0 / 3.0]
+        self.etaIntegrationPoints = [1.0 / 3.0]
+        # Area of reference triangle in (xi,eta) is 1/2 → weight = 0.5
+        self.Weights = [0.5]
+
+        # Local coordinates of the *nodes* (for stress recovery)
+        self.localCoord = np.array([
+            [0.0, 0.0],  # N1
+            [1.0, 0.0],  # N2
+            [0.0, 1.0],  # N3
+        ])
+
+    # --- shape functions and natural derivatives ---------------------------
+    def N(self, xi, eta):
+        N1 = 1.0 - xi - eta
+        N2 = xi
+        N3 = eta
+        return np.array([[N1, N2, N3]])
+
+    def dN_dxi(self, xi, eta):
+        # [dN1/dxi, dN2/dxi, dN3/dxi]
+        return np.array([[-1.0, 1.0, 0.0]])
+
+    def dN_deta(self, xi, eta):
+        # [dN1/deta, dN2/deta, dN3/deta]
+        return np.array([[-1.0, 0.0, 1.0]])

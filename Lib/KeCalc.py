@@ -70,11 +70,11 @@ def KeCalc(Points, planeType, E, v, t, ID=None):
             for j, eta in enumerate(element.etaIntegrationPoints):
                 jacb = calc.jacobian(element, xi, eta)
 
-                eB1 = calc.B1()
-                eB2 = calc.B2(jacb)
-                eB3 = calc.B3(xi, eta)
-                B = eB1 @ eB2 @ eB3
-
+                # eB1 = calc.B1()
+                # eB2 = calc.B2(jacb)
+                # eB3 = calc.B3(xi, eta)
+                # B = eB1 @ eB2 @ eB3
+                B = calc.B(xi, eta, jacb)
                 Ke += (
                     B.T @ C_dev @ B
                     * jacb.det
