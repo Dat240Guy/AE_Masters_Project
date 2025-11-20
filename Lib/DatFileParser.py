@@ -121,9 +121,13 @@ def DatFileParsing(dat):
     dfNodes = pd.DataFrame(nArray, columns = ["Type", "N", "CP", "XYZ", "CD"])
     dfNodes = dfNodes[["N", "XYZ"]]
     
+    t3 = [wrap(x, 8) for x in contents if x.startswith("CTRIA3")]
     e4 = [wrap(x, 8) for x in contents if x.startswith("CQUAD4")]
     e8 = [wrap(x, 8) for x in contents if x.startswith("CQUAD8")]
     e8 = [[y for y in x if y != "+"] for x in e8]
+    
+    dfEle3 = pd.DataFrame(t3, columns= ["Type", "Enumber", "Prop", "N1", "N2", "N3"])
+    dfEle3 = dfEle3.astype({"Type": str, "Enumber":int, "Prop":int, "N1":int, "N2":int, "N3":int})
     
     dfEle4 = pd.DataFrame(e4, columns= ["Type", "Enumber", "Prop", "N1", "N2", "N3", "N4"])
     dfEle4 = dfEle4.astype({"Type": str, "Enumber":int, "Prop":int, "N1":int, "N2":int, "N3":int, "N4": int})
@@ -135,6 +139,8 @@ def DatFileParsing(dat):
         dfEle8, dfEle7, dfEle6 = None, None, None
     else:
         dfEle7, dfEle6, dfNodes = transitionEleParsing(dfNodes, dfEle4, dfEle8, e8)
+    
+    if len(dfEle3) == 0: dfEle3 = None
     
     #processing materials
     materials = [wrap(x, 8)[0:7] for x in contents if x.startswith("MAT1")]
@@ -169,6 +175,6 @@ def DatFileParsing(dat):
     if len(dfEle4) == 0:
         dfEle4 = None
     
-    dOut = [dfNodes, dfEle4, dfEle6, dfEle7, dfEle8, 
+    dOut = [dfNodes, dfEle4, dfEle3, dfEle6, dfEle7, dfEle8, 
             dfMatProps, dfForces, dfConstraints]
     return dOut

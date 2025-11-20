@@ -70,7 +70,9 @@ def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
     for i in range(int(len(dispLocal)/2)):
         dispLocal[i*2:i*2+2] = RotMatrix(-theta, "2d") @ disp[i*2:i*2+2]
         
-    if len(Points) == 4:
+    if len(Points) == 3:
+        element = ER.t3(PointsLocal, ID = ID)
+    elif len(Points) == 4:
         element = ER.q4(PointsLocal, ID = ID)
     elif len(Points) == 8:
         element = ER.q8(PointsLocal, ID = ID)
@@ -112,7 +114,10 @@ def StressStrainCalc(dfEles, eTypes, dfDisp, dfNodes, planeType, dfMatProps):
     
     for df, elementType in zip(dfEles, eTypes):
         for index, row in df.iterrows():
-            if elementType == "CQ4":
+            if elementType == "CTRIA3":
+                points = np.zeros((3,3))
+                Ns = [0, 1, 2]
+            elif elementType == "CQ4":
                 points = np.zeros((4, 3))
                 Ns = [0, 1, 2, 3]
             elif elementType == "CQ8":
