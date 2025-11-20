@@ -56,7 +56,9 @@ def KeCalc(Points, planeType, E, v, t, ID=None):
         raise ValueError("planeType must be 'PlaneStress' or 'PlaneStrain'")
 
     
-    if Points.shape[0] == 4:
+    if Points.shape[0] == 3:
+        element = ER.t3(Points, ID=ID)
+    elif Points.shape[0] == 4:
         element = ER.q4(Points, ID=ID)
     elif Points.shape[0] == 8:
         element = ER.q8(Points, ID=ID)
@@ -103,7 +105,10 @@ def globalKCalc(KGlobal, dfEle, dfNodes, dfMatProps, elementType):
         KGTemp = np.zeros_like(KGlobal)
 
         # Build local coordinate array for this element
-        if elementType == "CQ4":
+        if elementType == "CTRIA3":
+            points = np.zeros((3, 3))
+            Ns_idx = [0, 1, 2]
+        elif elementType == "CQ4":
             points = np.zeros((4, 3))
             Ns_idx = [0, 1, 2, 3]
         elif elementType == "CQ8":
@@ -131,7 +136,9 @@ def globalKCalc(KGlobal, dfEle, dfNodes, dfMatProps, elementType):
         Ke = KeCalc(points, "PlaneStress", E, v, t, ID=row["Enumber"])
 
         # Node labels in the dataframe for DOF mapping
-        if elementType == "CQ4":
+        if elementType == "CTRIA3":
+            Ns = ["N1", "N2", "N3"]
+        elif elementType == "CQ4":
             Ns = ["N1", "N2", "N3", "N4"]
         elif elementType == "CQ8":
             Ns = ["N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8"]

@@ -247,11 +247,12 @@ class q7:
         
         
 class t3:
-    def __init__(self, Points, ID=None):
+    def __init__(self, globalCoord, ID = None):
         self.ID = ID
         self.nodeCount = 3
         self.totalDof = 2 * self.nodeCount
-        self.Points = np.array(Points, dtype=float)
+        # self.Points = np.array(Points, dtype=float)
+        self.globalCoord = [x[0:2] for x in globalCoord]
 
         # One-point full integration in area coords (constant strain triangle)
         self.xiIntegrationPoints  = [1.0 / 3.0]
@@ -267,16 +268,15 @@ class t3:
         ])
 
     # --- shape functions and natural derivatives ---------------------------
-    def N(self, xi, eta):
-        N1 = 1.0 - xi - eta
-        N2 = xi
-        N3 = eta
-        return np.array([[N1, N2, N3]])
+        self.N = [lambda xi, eta: 1 - xi - eta,
+                  lambda xi, eta: xi,
+                  lambda xi, eta: eta]
 
-    def dN_dxi(self, xi, eta):
-        # [dN1/dxi, dN2/dxi, dN3/dxi]
-        return np.array([[-1.0, 1.0, 0.0]])
+        self.dN_dxi = [lambda xi, eta: -1,
+                       lambda xi, eta: 1,
+                       lambda xi, eta: 0]
+        
+        self.dN_deta = [lambda xi, eta: -1,
+                       lambda xi, eta: 0,
+                       lambda xi, eta: 1]
 
-    def dN_deta(self, xi, eta):
-        # [dN1/deta, dN2/deta, dN3/deta]
-        return np.array([[-1.0, 0.0, 1.0]])
