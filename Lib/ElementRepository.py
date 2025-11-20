@@ -32,16 +32,13 @@ class qCalc:
                  sum(element.dN_deta[i](xi, eta) * element.globalCoord[i][1] for i in range(element.nodeCount))]
             ])
             self.det  = np.linalg.det(self.J)
-            # inside your Gauss loop, after computing J and detJ
             if self.det <= 0:
                 print("WARNING: detJ <= 0 at element", element.ID,"xi,eta", xi,eta, "detJ=", self.det)
             elif self.det < 1e-6:
                 print("Small detJ at element", element.ID, "detJ=", self.det)
-            # else:
-            #     print("Jacobian Is Positive")
 
             self.invT = np.linalg.inv(self.J).T
-    
+            
     def Nvals(self, element, xi, eta):
         return np.array([N(xi, eta) for N in element.N])
 
@@ -76,6 +73,44 @@ class qCalc:
         B3[2, 1::2] = self.dN_dxi_vals(e, xi, eta)
         B3[3, 1::2] = self.dN_deta_vals(e, xi, eta)
         return B3
+
+    def B(self, xi, eta, jacb):
+            """
+            Build the standard 3 x (2*n) B-matrix for 2D plane stress/strain:
+
+                [ εx ]   [ dN1/dx  0   ... dNn/dx   0   ] [u1]
+                [ εy ] = [ 0      dN1/dy ... 0     dNn/dy] [v1]
+                [ γxy]   [ dN1/dy dN1/dx ... dNn/dy dNn/dx] [vn]
+            """
+            e = self.element
+            n = e.nodeCount
+            totalDof = e.totalDof
+
+            # Derivatives w.r.t natural coords
+            dN_dxi  = self.dN_dxi_vals(e, xi, eta)   # (n,)
+            dN_deta = self.dN_deta_vals(e, xi, eta)  # (n,)
+
+            # J^{-1} from stored invT (invT = (J^{-1})^T)
+            invJ = jacb.invT.T                       # 2x2
+
+            # [dN/dx; dN/dy] = invJ @ [dN/dξ; dN/dη]
+            grads_nat = np.vstack((dN_dxi, dN_deta))  # 2 x n
+            grads_xy  = invJ @ grads_nat             # 2 x n
+
+            dN_dx = grads_xy[0, :]
+            dN_dy = grads_xy[1, :]
+
+            B = np.zeros((3, totalDof))
+            for i in range(n):
+                col_u = 2 * i
+                col_v = 2 * i + 1
+
+                B[0, col_u] = dN_dx[i]  # εx = Σ dNi/dx * ui
+                B[1, col_v] = dN_dy[i]  # εy = Σ dNi/dy * vi
+                B[2, col_u] = dN_dy[i]  # γxy = Σ dNi/dy * ui + dNi/dx * vi
+                B[2, col_v] = dN_dx[i]
+
+            return B
 
 class q4:
     def __init__(self, globalCoord, ID = None):

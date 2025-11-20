@@ -1,0 +1,52 @@
+INIT MASTER(S)
+NASTRAN SYSTEM(442)=-1,SYSTEM(319)=1
+ID Single,FEMAP
+SOL SESTATIC
+CEND
+  TITLE = Simcenter Nastran Static Analysis Set
+  ECHO = NONE
+  DISPLACEMENT(PLOT) = ALL
+  SPCFORCE(PLOT) = ALL
+  OLOAD(PLOT) = ALL
+  FORCE(PLOT,CORNER) = ALL
+  STRESS(PLOT,CORNER) = ALL
+  SPC = 1
+  LOAD = 1
+BEGIN BULK
+$ ***************************************************************************
+$   Written by : Femap
+$   Version    : 2412.0
+$   Translator : Simcenter Nastran
+$   From Model : C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Single_45_Element\Pos45.modfem
+$   Date       : Sun Nov 16 14:24:25 2025
+$   Output To  : C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\Single_45_Element\
+$ ***************************************************************************
+$
+PARAM,PRGPST,NO
+PARAM,POST,0
+PARAM,OGEOM,NO
+PARAM,AUTOSPC,YES
+PARAM,K6ROT,100.
+PARAM,GRDPNT,0
+CORD2C         1       0      0.      0.      0.      0.      0.      1.+FEMAPC1
++FEMAPC1      1.      0.      1.        
+CORD2S         2       0      0.      0.      0.      0.      0.      1.+FEMAPC2
++FEMAPC2      1.      0.      1.        
+$ Femap Load Set 1 : Untitled
+FORCE          1       1       0      1.  10000.      0.      0.
+$ Femap Constraint Set 1 : Untitled
+SPC1           1       2       2
+SPC1           1  123456       3
+SPC1           1       2       4
+$ Femap Property 1 : MEMBRANE Property
+PSHELL         1       1     .25                                      0.
+$ Femap Material 1 : 2024-T351 Al Plate: t = 0.25 to 0.5 inches
+MAT1           1  1.07+7             .332.5906-4 1.255-5     70.        +       
++         42000.  40000.  38000.
+MAT4           1.0016435  83.0762.5906-4                        
+GRID           1       0      1.      0.      0.       0
+GRID           2       0      0.      1.      0.       0
+GRID           3       0     -1.      0.      0.       0
+GRID           4       0      0.     -1.      0.       0
+CQUAD4         1       1       4       1       2       3                
+ENDDATA e063a76c
