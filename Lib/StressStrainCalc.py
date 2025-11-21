@@ -59,27 +59,27 @@ def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
     elif planeType == "PlaneStress":
         C = ER.PlaneStress(E, v, t).Array
     
-    eleX, eleY, eleZ = EleLocalCoordCalc(Points)
-    theta = np.arctan2(eleX[1], eleX[0])
-    # print("Theta Rotation in Degrees: ", np.degrees(theta))
-    PointsLocal = np.empty_like(Points)
-    for i, point in enumerate(Points):
-        PointsLocal[i, :] = RotMatrix(-theta, "3d") @ point
-    theta = 0
-    dispLocal = np.empty_like(disp)
-    for i in range(int(len(dispLocal)/2)):
-        dispLocal[i*2:i*2+2] = RotMatrix(-theta, "2d") @ disp[i*2:i*2+2]
+    # eleX, eleY, eleZ = EleLocalCoordCalc(Points)
+    # theta = np.arctan2(eleX[1], eleX[0])
+    # # print("Theta Rotation in Degrees: ", np.degrees(theta))
+    # PointsLocal = np.empty_like(Points)
+    # for i, point in enumerate(Points):
+    #     PointsLocal[i, :] = RotMatrix(-theta, "3d") @ point
+    # theta = 0
+    # dispLocal = np.empty_like(disp)
+    # for i in range(int(len(dispLocal)/2)):
+    #     dispLocal[i*2:i*2+2] = RotMatrix(-theta, "2d") @ disp[i*2:i*2+2]
         
     if len(Points) == 3:
-        element = ER.t3(PointsLocal, ID = ID)
+        element = ER.t3(Points, ID = ID)
     elif len(Points) == 4:
-        element = ER.q4(PointsLocal, ID = ID)
+        element = ER.q4(Points, ID = ID)
     elif len(Points) == 8:
-        element = ER.q8(PointsLocal, ID = ID)
+        element = ER.q8(Points, ID = ID)
     elif len(Points) == 7:
-        element = ER.q7(PointsLocal, ID = ID)
+        element = ER.q7(Points, ID = ID)
     elif len(Points) == 6:
-        element = ER.q6(PointsLocal, ID = ID)
+        element = ER.q6(Points, ID = ID)
     else:
         raise ValueError("Element type not recognized for Ke Calculation")
     
@@ -98,16 +98,16 @@ def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
         jacb = calc.jacobian(element, xiCalc, etaCalc)
         B = calc.B(xiCalc, etaCalc, jacb)
 
-        eps = (B @ dispLocal).reshape(-1)        # [εx, εy, γxy]
-        sig = (C @ (B @ dispLocal)).reshape(-1)  # [σx, σy, τxy]
+        eps = (B @ disp).reshape(-1)        # [εx, εy, γxy]
+        sig = (C @ (B @ disp)).reshape(-1)  # [σx, σy, τxy]
 
         nodalStrain[p, :] += eps
         nodalStress[p, :] += sig
 
         # Rotation to global if you decide to re-enable theta:
-        T = stressRotMatrix(-theta)
-        nodalStrainGlobal[p, :] += T @ nodalStrain[p, :]
-        nodalStressGlobal[p, :] += T @ nodalStress[p, :]
+        # T = stressRotMatrix(-theta)
+        nodalStrainGlobal[p, :] += nodalStrain[p, :]
+        nodalStressGlobal[p, :] += nodalStress[p, :]
     return nodalStrainGlobal, nodalStressGlobal
 
 def StressStrainCalc(dfEles, eTypes, dfDisp, dfNodes, planeType, dfMatProps):
