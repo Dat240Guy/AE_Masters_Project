@@ -24,13 +24,26 @@ if __name__ == "__main__":
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\HoleInPlate\HoleInPlate-0001.dat"
     # File = r"C:\Documents\Grad_School\MastersFinalProject\CodeBase\Nastran\Final_Models\Hole_In_Square_Plate\MyFEM\My_Hole_In_Square_Plate.dat"
     
-    '''Compounding Tension Strip Models'''
-    #PyDFEM Model
-    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM.dat"
-    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM_Refined_GoodBoundary.dat"
+    ''' Compounding Tension Strip Models '''
+    #AVFEM
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\AVFEM\CompoundTensionStripAVFEM-0001.dat"
     
-    ''' Compounding Tension Strip Models gradual mesh re-finment '''
-    File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM_10.dat"
+    #CQuAD4 DFEM
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\DFEM\CompoundTensionStripDFEM_CQ4_6-0000.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\DFEM\CompoundTensionStripDFEM_CQ4_8-0000.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\DFEM\CompoundTensionStripDFEM_CQ4_10-0000.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\DFEM\CompoundTensionStripDFEM_CQ4_12-0000.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\DFEM\CompoundTensionStripDFEM_CQ4_14-0000.dat" 
+    File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\DFEM\CompoundTensionStripDFEM_CQ4_16-0000.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\DFEM\CompoundTensionStripDFEM_CQ4_18-0000.dat"
+    
+    #CQUAD8 DFEM
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM_6.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM_8.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM_10.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM_12.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM_14.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM_18.dat"
     
     ''' Creating Results Dir '''
     outDir = resultsDir(File)
@@ -56,10 +69,10 @@ if __name__ == "__main__":
     
     '''Plotting'''
     dfDefNodes = DispCalc.build_deformed_nodes(dfNodes, dfDisp, scale = 50)
-    DispCalc.plot_deformed_mesh(dfDefNodes, dfEles)
-    Contour(dfNodes, dfDisp, ["U1", "U2"], dfEles)
-    # # Contour(dfNodes, dfStrain, ["E1", "E_max"], dfEles)
-    # Contour(dfNodes, dfStress, ["S1", "S2", "S12", "S_max"], dfEles)
-    Contour(dfNodes, dfStress, ["S1", "S2", "S12", "S_max"], dfEles, Averaging="Nodal")
+    # DispCalc.plot_deformed_mesh(dfDefNodes, dfEles)
+    # Contour(dfNodes, dfDisp, ["U1", "U2"], dfEles)
+    # # # Contour(dfNodes, dfStrain, ["E1", "E_max"], dfEles)
+    # # Contour(dfNodes, dfStress, ["S1", "S2", "S12", "S_max"], dfEles)
+    # Contour(dfNodes, dfStress, ["S1", "S2", "S12", "S_max"], dfEles, Averaging="Nodal")
         
     print("stop")
