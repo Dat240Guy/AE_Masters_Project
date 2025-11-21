@@ -27,7 +27,10 @@ if __name__ == "__main__":
     '''Compounding Tension Strip Models'''
     #PyDFEM Model
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM.dat"
-    File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM_Refined_GoodBoundary.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM_Refined_GoodBoundary.dat"
+    
+    ''' Compounding Tension Strip Models gradual mesh re-finment '''
+    File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\PyDFEM\CompoundTensionStripPyDFEM_10.dat"
     
     ''' Creating Results Dir '''
     outDir = resultsDir(File)
