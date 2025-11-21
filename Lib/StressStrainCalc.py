@@ -78,6 +78,8 @@ def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
         element = ER.q8(PointsLocal, ID = ID)
     elif len(Points) == 7:
         element = ER.q7(PointsLocal, ID = ID)
+    elif len(Points) == 6:
+        element = ER.q6(PointsLocal, ID = ID)
     else:
         raise ValueError("Element type not recognized for Ke Calculation")
     
@@ -126,6 +128,9 @@ def StressStrainCalc(dfEles, eTypes, dfDisp, dfNodes, planeType, dfMatProps):
             elif elementType == "CQ7":
                 points = np.zeros((7, 3))
                 Ns = [0, 1, 2, 3, 4, 5, 6]
+            elif elementType == "CQ6":
+                points = np.zeros((6, 3))
+                Ns = [0, 1, 2, 3, 4, 5]
             else:
                 raise ValueError("Element type not recognized")
             uElement = np.zeros((len(Ns)*2, 1)) # Blank array for elemental displacements

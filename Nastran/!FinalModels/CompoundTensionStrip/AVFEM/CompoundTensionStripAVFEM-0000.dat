@@ -1,0 +1,246 @@
+INIT MASTER(S)
+NASTRAN SYSTEM(442)=-1,SYSTEM(319)=1
+ID FFinalM,FEMAP
+SOL SESTATIC
+CEND
+  TITLE = Simcenter Nastran Static Analysis Set
+  ECHO = NONE
+  DISPLACEMENT(PLOT) = ALL
+  SPCFORCE(PLOT) = ALL
+  OLOAD(PLOT) = ALL
+  FORCE(PLOT,CORNER) = ALL
+  STRESS(PLOT,CORNER) = ALL
+  SPC = 1
+  LOAD = 1
+BEGIN BULK
+$ ***************************************************************************
+$   Written by : Femap
+$   Version    : 2412.0
+$   Translator : Simcenter Nastran
+$   From Model : C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\AVFEM\CompoundTensionStripAVFEM.modfem
+$   Date       : Wed Nov 19 23:18:21 2025
+$   Output To  : C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\AVFEM\
+$ ***************************************************************************
+$
+PARAM,PRGPST,NO
+PARAM,POST,0
+PARAM,OGEOM,NO
+PARAM,AUTOSPC,YES
+PARAM,K6ROT,100.
+PARAM,GRDPNT,0
+CORD2C         1       0      0.      0.      0.      0.      0.      1.+FEMAPC1
++FEMAPC1      1.      0.      1.        
+CORD2S         2       0      0.      0.      0.      0.      0.      1.+FEMAPC2
++FEMAPC2      1.      0.      1.        
+$ Femap Coordinate System 3 : Rectangular Coordinate System
+CORD2R         3       0  7.1375    .525      0.  7.1375    .525     -1.+       
++       8.113687.3080695      0.        
+$ Femap Load Set 1 : Untitled
+FORCE          1      40       0      1.    250.      0.      0.
+FORCE          1      62       0      1.    250.      0.      0.
+FORCE          1      63       0      1.    500.      0.      0.
+$ Femap Constraint Set 1 : Untitled
+SPC1           1  123456       1
+SPC1           1       2       2
+SPC1           1       2       3
+SPC1           1       2       4
+SPC1           1       2       5
+SPC1           1       2       6
+SPC1           1       2       7
+SPC1           1       2       8
+SPC1           1       2       9
+SPC1           1       2      10
+SPC1           1       2      11
+SPC1           1  123456      23
+SPC1           1  123456      24
+SPC1           1       2      37
+SPC1           1       2      38
+SPC1           1       2      40
+SPC1           1       2      41
+SPC1           1       2      42
+SPC1           1       2      43
+SPC1           1       2      44
+SPC1           1       2      45
+SPC1           1       2      46
+SPC1           1       2      47
+SPC1           1       2      48
+SPC1           1       2      49
+SPC1           1       2      50
+SPC1           1       2      78
+SPC1           1       2      79
+$ Femap Property 1 : PLATE Property
+PSHELL         1       1     .25       1               1              0.
+$ Femap Material 1 : 2024-T351 Al Plate: t = 0.25 to 0.5 inches
+MAT1           1  1.07+7             .332.5906-4 1.255-5     70.        +       
++         42000.  40000.  38000.
+MAT4           1.0016435  83.0762.5906-4                        
+GRID           1       0      0.      0.      0.       0
+GRID           2       0      .5      0.      0.       0
+GRID           3       0      1.      0.      0.       0
+GRID           4       0     1.5      0.      0.       0
+GRID           5       0      2.      0.      0.       0
+GRID           6       0     2.5      0.      0.       0
+GRID           7       0      3.      0.      0.       0
+GRID           8       0     3.5      0.      0.       0
+GRID           9       0      4.      0.      0.       0
+GRID          10       0     4.5      0.      0.       0
+GRID          11       0      5.      0.      0.       0
+GRID          12       0      5.      .5      0.       0
+GRID          13       0      5.      1.      0.       0
+GRID          14       0     4.5      1.      0.       0
+GRID          15       0      4.      1.      0.       0
+GRID          16       0     3.5      1.      0.       0
+GRID          17       0      3.      1.      0.       0
+GRID          18       0     2.5      1.      0.       0
+GRID          19       0      2.      1.      0.       0
+GRID          20       0     1.5      1.      0.       0
+GRID          21       0      1.      1.      0.       0
+GRID          22       0      .5      1.      0.       0
+GRID          23       0      0.      1.      0.       0
+GRID          24       0      0.      .5      0.       0
+GRID          25       0      .5      .5      0.       0
+GRID          26       0      1.      .5      0.       0
+GRID          27       0     1.5      .5      0.       0
+GRID          28       0      2.      .5      0.       0
+GRID          29       0     2.5      .5      0.       0
+GRID          30       0      3.      .5      0.       0
+GRID          31       0     3.5      .5      0.       0
+GRID          32       0      4.      .5      0.       0
+GRID          33       0     4.5      .5      0.       0
+GRID          34       0  5.5625    .875      0.       0
+GRID          35       0   6.125     .75      0.       0
+GRID          36       0   6.125    .375      0.       0
+GRID          37       0   6.125      0.      0.       0
+GRID          38       0  5.5625      0.      0.       0
+GRID          39       0  5.5625   .4375      0.       0
+GRID          40       0      9.      0.      0.       0
+GRID          41       08.849143      0.      0.       0
+GRID          42       08.698286      0.      0.       0
+GRID          43       08.547429      0.      0.       0
+GRID          44       08.396571      0.      0.       0
+GRID          45       08.245714      0.      0.       0
+GRID          46       08.094857      0.      0.       0
+GRID          47       0   7.944      0.      0.       0
+GRID          48       0   7.812      0.      0.       0
+GRID          49       0    7.68      0.      0.       0
+GRID          50       0     7.5      0.      0.       0
+GRID          51       0     7.5   .1375      0.       0
+GRID          52       0     7.5     .25      0.       0
+GRID          53       0    7.68     .25      0.       0
+GRID          54       0   7.812     .25      0.       0
+GRID          55       0   7.944     .25      0.       0
+GRID          56       08.094857     .25      0.       0
+GRID          57       08.245714     .25      0.       0
+GRID          58       08.396571     .25      0.       0
+GRID          59       08.547429     .25      0.       0
+GRID          60       08.698286     .25      0.       0
+GRID          61       08.849143     .25      0.       0
+GRID          62       0      9.     .25      0.       0
+GRID          63       0      9.    .125      0.       0
+GRID          64       08.849143.1262571      0.       0
+GRID          65       08.698286.1275143      0.       0
+GRID          66       08.547429.1287714      0.       0
+GRID          67       08.396571.1300286      0.       0
+GRID          68       08.245714.1312857      0.       0
+GRID          69       08.094857.1325429      0.       0
+GRID          70       0   7.944   .1338      0.       0
+GRID          71       0   7.812   .1349      0.       0
+GRID          72       0    7.68    .136      0.       0
+GRID          73       0 6.63125   .6375      0.       0
+GRID          74       06.884375  .58125      0.       0
+GRID          75       06.884375.4359375      0.       0
+GRID          76       06.884375 .290625      0.       0
+GRID          77       06.884375.1453125      0.       0
+GRID          78       06.884375      0.      0.       0
+GRID          79       06.504688      0.      0.       0
+GRID          80       06.591958.1580967      0.       0
+GRID          81       06.617461.3187738      0.       0
+GRID          82       06.626476.4794033      0.       0
+GRID          83       06.361535.1683465      0.       0
+GRID          84       06.369176 .346875      0.       0
+GRID          85       06.373042.5254487      0.       0
+GRID          87       0   7.375    .375      0.       0
+GRID          88       0    7.25      .5      0.       0
+GRID          89       07.067188 .540625      0.       0
+GRID          95       07.038281      0.      0.       0
+GRID          96       07.192187      0.      0.       0
+GRID          97       07.346094      0.      0.       0
+GRID         100       07.300392.3276844      0.       0
+GRID         101       07.195756.3705349      0.       0
+GRID         102       07.046084.4041078      0.       0
+GRID         103       07.332112.2384477      0.       0
+GRID         104       07.341508.1257595      0.       0
+GRID         105       0 7.03862.2702133      0.       0
+GRID         106       07.037299.1356666      0.       0
+GRID         107       07.188178.2513517      0.       0
+GRID         108       07.189429.1279699      0.       0
+PLOTEL4        1       1       2      25      24                        
+PLOTEL4        2       2       3      26      25                        
+PLOTEL4        3       3       4      27      26                        
+PLOTEL4        4       4       5      28      27                        
+PLOTEL4        5       5       6      29      28                        
+PLOTEL4        6       6       7      30      29                        
+PLOTEL4        7       7       8      31      30                        
+PLOTEL4        8       8       9      32      31                        
+PLOTEL4        9       9      10      33      32                        
+PLOTEL4       10      10      11      12      33                        
+PLOTEL4       11      24      25      22      23                        
+PLOTEL4       12      25      26      21      22                        
+PLOTEL4       13      26      27      20      21                        
+PLOTEL4       14      27      28      19      20                        
+PLOTEL4       15      28      29      18      19                        
+PLOTEL4       16      29      30      17      18                        
+PLOTEL4       17      30      31      16      17                        
+PLOTEL4       18      31      32      15      16                        
+PLOTEL4       19      32      33      14      15                        
+PLOTEL4       20      33      12      13      14                        
+PLOTEL4       21      13      34      39      12                        
+PLOTEL4       22      34      35      36      39                        
+PLOTEL4       23      12      39      38      11                        
+PLOTEL4       24      39      36      37      38                        
+PLOTEL4       25      40      41      64      63                        
+PLOTEL4       26      41      42      65      64                        
+PLOTEL4       27      42      43      66      65                        
+PLOTEL4       28      43      44      67      66                        
+PLOTEL4       29      44      45      68      67                        
+PLOTEL4       30      45      46      69      68                        
+PLOTEL4       31      46      47      70      69                        
+PLOTEL4       32      47      48      71      70                        
+PLOTEL4       33      48      49      72      71                        
+PLOTEL4       34      49      50      51      72                        
+PLOTEL4       35      63      64      61      62                        
+PLOTEL4       36      64      65      60      61                        
+PLOTEL4       37      65      66      59      60                        
+PLOTEL4       38      66      67      58      59                        
+PLOTEL4       39      67      68      57      58                        
+PLOTEL4       40      68      69      56      57                        
+PLOTEL4       41      69      70      55      56                        
+PLOTEL4       42      70      71      54      55                        
+PLOTEL4       43      71      72      53      54                        
+PLOTEL4       44      72      51      52      53                        
+PLOTEL4       45      37      36      84      83                        
+PLOTEL4       46      37      83      80      79                        
+PLOTEL4       47      83      84      81      80                        
+PLOTEL4       48      36      35      85      84                        
+PLOTEL4       49      35      73      82      85                        
+PLOTEL4       50      84      85      82      81                        
+PLOTEL4       51      79      80      77      78                        
+PLOTEL4       52      80      81      76      77                        
+PLOTEL4       53      81      82      75      76                        
+PLOTEL4       54      82      73      74      75                        
+PLOTEL4       55      87      88     101     100                        
+PLOTEL4       56      88      89     102     101                        
+PLOTEL4       57      89      74      75     102                        
+PLOTEL4       58      75      76     105     102                        
+PLOTEL4       59      76      77     106     105                        
+PLOTEL4       60      77      78      95     106                        
+PLOTEL4       61     102     105     107     101                        
+PLOTEL4       62     105     106     108     107                        
+PLOTEL4       63     106      95      96     108                        
+PLOTEL4       64     101     107     103     100                        
+PLOTEL4       65     107     108     104     103                        
+PLOTEL4       66     108      96      97     104                        
+PLOTEL4       67      97      50      51     104                        
+PLOTEL4       68     104      51      52     103                        
+PLOTEL4       69     103      52      87     100                        
+ENDDATA 21d8e31d

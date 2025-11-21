@@ -1,0 +1,104 @@
+Simcenter Nastran 2412.0000 (Intel64 Family 6 Model 170 Stepping 4 Windows 10) Control File:
+--------------------------------------------------------------------------------------
+Nastran BUFFSIZE=32769 $(c:/program files/siemens/femap 2412 student/nastran/conf/nastran.rcf[4])
+Nastran BUFFPOOL=20.0X $(c:/program files/siemens/femap 2412 student/nastran/conf/nastran.rcf[7])
+Nastran DIAGA=128 DIAGB=0 $(c:/program files/siemens/femap 2412 student/nastran/conf/nastran.rcf[10])
+Nastran REAL=4241620992 $(Memory limit for MPI and other specialized modules)
+JID='c:/documents/grad_school/!ae_masters_project/ae_masters_project/nastran/!finalmodels/compoundtensionstrip/avfem/compoundtensionstripavfem-0001.dat'
+OUT='c:/documents/grad_school/!ae_masters_project/ae_masters_project/nastran/!finalmodels/compoundtensionstrip/avfem/compoundtensionstripavfem-0001'
+MEM=1909436416
+MACH='Intel64 Family 6 Model 170 Stepping 4'
+OPER='Windows 10'
+OSV=' '
+MODEL='Intel(R) Core(TM) Ultra 9 185H (Chads)'
+CONFIG=8666
+NPROC=22
+symbol=DELDIR='c:/program files/siemens/femap 2412 student/nastran/scnas/nast/del' $(program default)
+symbol=DEMODIR='c:/program files/siemens/femap 2412 student/nastran/scnas/nast/demo' $(program default)
+symbol=SSSALTERDIR='c:/program files/siemens/femap 2412 student/nastran/scnas/nast/misc/sssalter' $(program default)
+symbol=TPLDIR='c:/program files/siemens/femap 2412 student/nastran/scnas/nast/tpl' $(program default)
+SDIR='c:/scratch/compoundtensionstripavfem-0001.T48228_59'
+DBS='c:/scratch/compoundtensionstripavfem-0001.T48228_59'
+SCR=yes
+SMEM=20.0X
+NEWDEL='c:/program files/siemens/femap 2412 student/nastran/scnas/em64tntl/SSS'
+DEL='NXNDEF'
+AUTH='28000@LocalHost'
+AUTHQUE=0
+MSGCAT='c:/program files/siemens/femap 2412 student/nastran/scnas/em64tntl/analysis.msg'
+MSGDEST='f06'
+PROG=FEMAP
+NEWS='c:/program files/siemens/femap 2412 student/nastran/scnas/nast/news.txt'
+UMATLIB='libnxumat.dll'
+UCRPLIB='libucreep.dll'
+USOLLIB='libusol.dll'
+--------------------------------------------------------------------------------------
+NXN_ISHELLPATH=C:\Program Files\Siemens\Femap 2412 Student\nastran\bin
+NXN_JIDPATH=
+PATH=c:/program files/siemens/femap 2412 student/nastran/scnas/em64tntl;c:/program files/siemens/femap 2412 student/nastran/scnas/em64tntl/sysnoise;c:/program files/siemens/femap 2412 student/nastran/scnas/em64tntl/softwareanalytics;c:/program files/siemens/femap 2412 student/nastran/scnas/em64tntl/samcef;c:/program files/siemens/femap 2412 student/nastran/scnas/em64tntl/impi/bin;c:/program files/siemens/femap 2412 student/nastran/scnas/em64tntl/monitor;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\Git\cmd;C:\Users\chadm\AppData\Local\Microsoft\WindowsApps;C:\Users\chadm\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\chadm\AppData\Local\Programs\MiKTeX\miktex\bin\x64\;C:\Users\chadm\AppData\Local\GitHubDesktop\bin
+Command Line: C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\AVFEM\CompoundTensionStripAVFEM-0001.dat bat=no out=C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\AVFEM\ scr=yes
+Current Dir: C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip\AVFEM
+Executable:  c:/program files/siemens/femap 2412 student/nastran/scnas/em64tntl/analysis.exe
+NXN_MSG:     stderr
+--------------------------------------------------------------------------------------
+Current resource limits:
+ Physical memory:                    32373 MB
+ Physical memory available:          10851 MB
+ Paging file size:                   54845 MB
+ Paging file size available:         16171 MB
+ Virtual memory:                 134217727 MB
+ Virtual memory available:       134213557 MB
+--------------------------------------------------------------------------------------
+System configuration:
+ Hostname:         Chads
+ Architecture:     em64tnt
+ Platform:         Intel64 Family 6 Model 170 Stepping 4 Windows 10  
+ Model:            Intel(R) Core(TM) Ultra 9 185H
+ Clock freq.:      3072 MHz
+ Number of CPUs:   22
+ Executable:       standard
+ Raw model ID:     8666
+ Config number:    8666
+ Physical memory:  32373 MB
+ Virtual memory:   54845 MB
+ Numeric format:   64-bit little-endian IEEE.
+ Bytes per word:   8
+ Disk block size:  512 bytes (64 words)
+ Remote shell cmd: Remote capabilities not available.
+--------------------------------------------------------------------------------------
+Simcenter Nastran started  Wed Nov 19 23:20:59 CST 2025
+ 23:20:59  Beginning Analysis
+
+ 23:20:59  Simcenter NASTRAN Authorization Information - System Attributes
+ 23:20:59  --------------------------------------------------------
+ 23:20:59  Model: Intel(R) Core(TM) Ultra 9 185H (
+ 23:20:59  Machine: Intel64 Family 6 Model 170 Stepp
+ 23:20:59  OS: Windows 10
+ 23:20:59  Version:
+ 23:20:59  License File(s): 28000@LocalHost
+
+ 23:20:59  The FEMAP dll Search String is c:\program files\siemens\femap 2412 student\auth_*.dll .
+ 23:20:59  Found the FEMAP authorization dll auth_2412.dll
+ 23:20:59  Loading FEMAP Authorization dll auth_2412.dll
+
+ 23:20:59  Simcenter NASTRAN Authorization Information - Checkout Successful
+ 23:20:59  -----------------------------------------------------------------
+ 23:20:59  License for module Simcenter Nastran Basic - FEMAP Desktop  checked out successfully
+
+ 23:20:59  Analysis started.
+ 23:20:59  Geometry access/verification to CAD part initiated (if needed).
+ 23:20:59  Geometry access/verification to CAD part successfully completed (if needed).
+ 23:20:59  Finite element model generation started.
+ 23:20:59  Finite element model generated 762 degrees of freedom.
+ 23:20:59  Finite element model generation successfully completed.
+ 23:20:59  Application of Loads and Boundary Conditions to the finite element model started.
+ 23:20:59  Application of Loads and Boundary Conditions to the finite element model successfully completed.
+ 23:20:59  Solution of the system equations for linear statics started.
+ 23:20:59  Solution of the system equations for linear statics successfully completed.
+ 23:21:00  Linear static analysis completed.
+ 23:21:00  NSEXIT: EXIT(0)
+ 23:21:00  Analysis complete  0
+Real:        0.614 seconds ( 0:00:00.614)
+User:        0.171 seconds ( 0:00:00.171)
+Sys:         0.281 seconds ( 0:00:00.281)
+Simcenter Nastran finished Wed Nov 19 23:21:00 CST 2025

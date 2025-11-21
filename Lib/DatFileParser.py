@@ -17,93 +17,201 @@ def wrap(s, width):
     return trimmed_chunks
 
 def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
+    import pandas as pd
+
     dfEle7 = None
     dfEle6 = None
-    
-    # Creating a dicitonary of nodes and the quantity of occurances that nodes has in CQ4 and CQ8 elements
+
+    # ----------------------------------------------------
+    # 1. BUILD NODE USAGE DICTIONARY (counts in CQ4 and CQ8)
+    # ----------------------------------------------------
     ndict = {}
-    for node in dfNodes.iterrows():
-        n4Count = (dfEle4[['N1', 'N2', 'N3', 'N4']] == node[1]['N']).sum().sum()
-        n8Count = (dfEle8[['N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', 'N8']] == node[1]['N']).sum().sum()
-        ndict[node[1]['N']] = {"n4Count":n4Count, "n8Count":n8Count, "totalCount":n4Count + n8Count}
-    
-    nCommon = {x: ndict[x] for x in ndict.keys() if ndict[x]["n8Count"] > 0 and ndict[x]["n4Count"] > 0} # Finding the common nodes between cq4 and cq8 elements
-    e7Common = [ele for ele in e8 if any(str(n) in ele[3:11] for n in nCommon.keys())] # Finding the cq8 elements with the nCommon nodes
-    eTemp = []
-    
-    # Filtering e7Common elements that are not actually e7 elements but e8 elemetns at the boundary 
-    for i, e in enumerate(e7Common):
-        count = 0
-        for n in e[3:11]:
-            try: 
-                n4Count = ndict[int(n)]["n4Count"]
-                if n4Count >= 2:
-                    count += 1
-            except: 
-                pass
-        if count >= 3:
-            pass
+    for _, node in dfNodes.iterrows():
+        nid = node["N"]
+        n4Count = (dfEle4[['N1', 'N2', 'N3', 'N4']] == nid).sum().sum()
+        n8Count = (dfEle8[['N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', 'N8']] == nid).sum().sum()
+        ndict[nid] = {
+            "n4Count": n4Count,
+            "n8Count": n8Count,
+            "totalCount": n4Count + n8Count
+        }
+
+    # ----------------------------------------------------
+    # 2. IDENTIFY CQ8 ELEMENTS THAT TOUCH CQ4 (TRANSITION REGION)
+    # ----------------------------------------------------
+    nCommon = {nid: info for nid, info in ndict.items()
+               if info["n8Count"] > 0 and info["n4Count"] > 0}
+
+    # Filter CQ8 list: Those touching common nodes
+    e8_candidates = [
+        ele for ele in e8
+        if any(str(nid) in ele[3:11] for nid in nCommon.keys())
+    ]
+
+    # Further filter: must have < 3 "strong CQ4-adjacent" corner nodes
+    e8_transition = []
+    for ele in e8_candidates:
+        cnt = 0
+        for nid in ele[3:7]:  # only corner nodes
+            if ndict[int(nid)]["n4Count"] >= 2:
+                cnt += 1
+        if cnt <= 3:
+            e8_transition.append(ele)
+
+    # ----------------------------------------------------
+    # 3. PROCESS EACH TRANSITION CQ8 ELEMENT → CQ7 or CQ6
+    # ----------------------------------------------------
+    e7_list = []    # list of tuples: (CQ8_full_card, [7 nodes])
+    e6_list = []    # list of tuples: (CQ8_full_card, [6 nodes])
+    nFree = []      # nodes to delete later
+    blankCountList = []
+    for ele in e8_transition:
+        efull = ele                        # original CQ8 structure
+        nodes = ele[3:11].copy()           # list of 8 nodes [C1,C2,C3,C4,MB,MR,MT,ML]
+
+        # ---------------------------------------------
+        # 3a. Identify free-edge corner nodes
+        # ---------------------------------------------
+        freeEdgeCorners = []
+        for j, nid in enumerate(nodes[:4]):
+            if ndict[int(nid)]["totalCount"] == 2:
+                freeEdgeCorners.append(nid)
+
+        # Determine the free-edge midside node (if present)
+        freeEdgeMid = None
+        if len(freeEdgeCorners) >= 2:
+            i1 = nodes.index(freeEdgeCorners[0])
+            i2 = nodes.index(freeEdgeCorners[1])
+
+            # Corner index pairs → matching midside
+            if (i1, i2) in [(0, 1), (1, 0)]:
+                freeEdgeMid = nodes[4]   # bottom mid
+            elif (i1, i2) in [(1, 2), (2, 1)]:
+                freeEdgeMid = nodes[5]   # right mid
+            elif (i1, i2) in [(2, 3), (3, 2)]:
+                freeEdgeMid = nodes[6]   # top mid
+            elif (i1, i2) in [(3, 0), (0, 3)]:
+                freeEdgeMid = nodes[7]   # left mid
+
+        # ---------------------------------------------
+        # 3b. Blank nodes: those only appearing once & not free-edge-mid
+        # ---------------------------------------------
+        blankCount = 0
+        
+        for idx, nid in enumerate(nodes):
+            if ndict[int(nid)]["totalCount"] == 1 and nid != freeEdgeMid:
+                nodes[idx] = "Blank"
+                blankCount += 1
+                blankCountList.append(nid)
+                nFree.append(nid)
+
+        # ---------------------------------------------
+        # 3c. CASE 1: CQ7 (1 blank)
+        # ---------------------------------------------
+        if blankCount == 1:
+            bidx = nodes.index("Blank")
+
+            # remove Blank or rotate appropriately
+            if bidx == 7:
+                # already between N1 and N4
+                nodes.remove("Blank")
+            elif bidx == 4:
+                # Left shift corners
+                nodes = [nodes[1], nodes[2], nodes[3], nodes[0],
+                         nodes[5], nodes[6], nodes[7]]
+            elif bidx == 5:
+                nodes = [nodes[2], nodes[3], nodes[0], nodes[1],
+                         nodes[6], nodes[7], nodes[4]]
+            elif bidx == 6:
+                nodes = [nodes[3], nodes[0], nodes[1], nodes[2],
+                         nodes[7], nodes[4], nodes[5]]
+
+            e7_list.append((efull, nodes))
+
+        # ---------------------------------------------
+        # 3d. CASE 2: CQ6 (2 blanks)
+        # ---------------------------------------------
+        elif blankCount == 2:
+
+            # find blank positions
+            blank_indices = sorted(i for i, nid in enumerate(nodes) if nid == "Blank")
+
+            # rotate corners until blanks sit at MT(6) and ML(7)
+            def rotate_element(e):
+                """
+                Rotate CQ8 node list CCW while preserving
+                the relative mapping of midside nodes.
+                """
+                C1, C2, C3, C4, MB, MR, MT, ML = e
+
+                return [
+                    C2, C3, C4, C1,   # rotated corners
+                    MR, MT, ML, MB    # rotated midsides
+                ]
+
+            for _ in range(4):
+                blank_indices = [i for i, n in enumerate(nodes) if n == "Blank"]
+                if blank_indices == [6, 7]:
+                    break
+                nodes = rotate_element(nodes)
+
+            if blank_indices != [6, 7]:
+                raise ValueError("Failed to align blanks to MT/ML for CQ6 element")
+
+            # Remove MT and ML → keep first 6 nodes
+            reduced = nodes[:6]
+            e6_list.append((efull, reduced))
+
         else:
-            eTemp.append(e)
-    e7Common = eTemp
-    #routine to find the e7 nodes (Need to filter for free nodes that are c/t to the part edge)
-    e7, nFree = [], []
-    for i, e in enumerate(e7Common):
-        efull = e
-        e = e[3:11]
-        freeEdgeNodes, freeEdgeMidNodes = [], []
-        #Determining if the element has any free edge where free midside nodes are expected
-        for j, n in enumerate(e):
-            if j <= 3: # iterating through the first 4 nodes of the cq* ele. These are the 4 corner nodes
-                if ndict[int(n)]["totalCount"] == 2: #Coner node that only attaches two 2 elements is at a free edge
-                    freeEdgeNodes.append(n)
-        #Determinig the two corner nodes that lie on the free edge to find the corresponding free midside node
-        if len(freeEdgeNodes) > 0:
-            if e.index(freeEdgeNodes[0]) == 0 and e.index(freeEdgeNodes[1]) == 1:
-                freeEdgeMidNodes = e[4]
-            elif e.index(freeEdgeNodes[0]) == 1 and e.index(freeEdgeNodes[1]) == 2:
-                freeEdgeMidNodes = e[5]
-            elif e.index(freeEdgeNodes[0]) == 2 and e.index(freeEdgeNodes[1]) == 3:
-                freeEdgeMidNodes = e[6]
-            elif e.index(freeEdgeNodes[0]) == 3 and e.index(freeEdgeNodes[1]) == 0:
-                freeEdgeMidNodes = e[7]
-            elif e.index(freeEdgeNodes[0]) == 0 and e.index(freeEdgeNodes[1]) == 3:
-                freeEdgeMidNodes = e[7]
-        '''
-        Determining the extra node of the CQ8 element that is not connected to any other elements
-        and not on a free edge. This node is deleted and the 7 remaining nodes are the 7 nodes
-        of the CQ7 element 
-        '''
-        for j, n in enumerate(e):
-            if ndict[int(n)]["totalCount"] == 1 and n not in freeEdgeMidNodes: #If the node is only found on a single element aka free and not a free edge node
-                e[e.index(n)] = "Blank"
-                # re--ordering as necessary to ensure the free "8th" node lies between the 1 and 4 nodes as is assumed by the shape functions
-                # re-odering does not have any impact on the down stream caclulations as the Jacobian maps global to natural coordinate systesm
-                if e.index("Blank") == 7:
-                    e.remove("Blank")
-                elif e.index("Blank") == 4:
-                    e = [e[1], e[2], e[3], e[0], e[5], e[6], e[7]]
-                elif e.index("Blank") == 5:
-                    e = [e[2], e[3], e[0], e[1], e[6], e[7], e[4]]
-                elif e.index("Blank") == 6:
-                    e = [e[3], e[0], e[1], e[2], e[7], e[4], e[5]]
-                e7.append(e)
-                nFree.append(n)
-    e7Final = []
-    if len(e7Common) != len(e7):
-        raise ValueError("6 noded transition elements not yet implemented. Check for duplicate cq7 entries indicating a possible 6 noded transition element")
-    for eA, eB in zip(e7Common, e7):
-        e7Final.append(["CQUAD7", eA[1], eA[2]] + eB) #Re-assembling the full CQ7 Element Card
-    if e7 != []:
-        dfEle7 = pd.DataFrame(e7Final, columns= ["Type", "Enumber", "Prop", "N1", "N2", "N3", "N4", "N5", "N6", "N7"])
-        dfEle7 = dfEle7.astype({"Type": str, "Enumber":int, "Prop":int, "N1":int, "N2":int, "N3":int, "N4": int,
-                            "N5":int, "N6":int, "N7":int})
-    lenDFNodes = len(dfNodes)
-    dfNodes = dfNodes[~dfNodes["N"].isin([nFree])]
-    if lenDFNodes == len(dfNodes) and isinstance(dfEle7, pd.DataFrame):
-        RuntimeWarning("I do not believe the free nodes have been removed properly ")
-    
+            raise ValueError("Invalid number of free nodes: expected 1 or 2.")
+
+    # ----------------------------------------------------
+    # 4. Assemble dfEle7 dataframe
+    # ----------------------------------------------------
+    if e7_list:
+        e7Final = []
+        for efull, nodes7 in e7_list:
+            e7Final.append(["CQUAD7", efull[1], efull[2]] + nodes7)
+
+        dfEle7 = pd.DataFrame(
+            e7Final,
+            columns=["Type", "Enumber", "Prop",
+                     "N1", "N2", "N3", "N4", "N5", "N6", "N7"]
+        ).astype({
+            "Type": str, "Enumber": int, "Prop": int,
+            "N1": int, "N2": int, "N3": int, "N4": int,
+            "N5": int, "N6": int, "N7": int
+        })
+
+    # ----------------------------------------------------
+    # 5. Assemble dfEle6 dataframe
+    # ----------------------------------------------------
+    if e6_list:
+        e6Final = []
+        for efull, nodes6 in e6_list:
+            e6Final.append(["CQUAD6", efull[1], efull[2]] + nodes6)
+
+        dfEle6 = pd.DataFrame(
+            e6Final,
+            columns=["Type", "Enumber", "Prop",
+                     "N1", "N2", "N3", "N4", "N5", "N6"]
+        ).astype({
+            "Type": str, "Enumber": int, "Prop": int,
+            "N1": int, "N2": int, "N3": int,
+            "N4": int, "N5": int, "N6": int
+        })
+
+    # ----------------------------------------------------
+    # 6. Remove free nodes from DFNodes
+    # ----------------------------------------------------
+    lenBefore = len(dfNodes)
+    dfNodes = dfNodes[~dfNodes["N"].isin(nFree)]
+
+    if lenBefore == len(dfNodes) and (dfEle7 is not None or dfEle6 is not None):
+        print("WARNING: free nodes may not have been removed properly")
+
     return dfEle7, dfEle6, dfNodes
+
 
 def DatFileParsing(dat):
     with open(dat) as datFile:

@@ -245,6 +245,56 @@ class q7:
         self.etaIntegrationPoints = [-np.sqrt(3/5), 0, np.sqrt(3/5)]
         self.Weights = [5/9, 8/9, 5/9]
         
+class q6:
+
+    def __init__(self, globalCoord, ID=None):
+        self.nodeCount   = 6
+        self.dimensions  = 2
+        self.dofPerNode  = 2
+        self.ID          = ID
+        self.totalDof    = self.nodeCount * self.dofPerNode
+        self.globalCoord = [x[0:2] for x in globalCoord]
+
+        self.localCoord = np.array([
+            [-1.0, -1.0],   # 1
+            [ 1.0, -1.0],   # 2
+            [ 1.0,  1.0],   # 3
+            [-1.0,  1.0],   # 4
+            [ 0.0, -1.0],   # 5 (mid bottom)
+            [ 1.0,  0.0],   # 6 (mid right)
+        ])
+
+        self.N = [
+            lambda xi, eta: (eta*xi)/4 - eta/4 + xi**2/2 - xi/4 - 1/4,
+            lambda xi, eta: eta**2/2 - (eta*xi)/4 - eta/4 + xi**2/2 + xi/4 - 3/4,
+            lambda xi, eta: eta**2/2 + (eta*xi)/4 + eta/4 + xi/4 - 1/4,
+            lambda xi, eta: -(eta*xi)/4 + eta/4 - xi/4 + 1/4,
+            lambda xi, eta: 1 - xi**2,
+            lambda xi, eta: 1 - eta**2,
+        ]
+
+        self.dN_dxi = [
+            lambda xi, eta: eta/4 + xi - 1/4,
+            lambda xi, eta: -eta/4 + xi + 1/4,
+            lambda xi, eta: eta/4 + 1/4,
+            lambda xi, eta: -eta/4 - 1/4,
+            lambda xi, eta: -2*xi,
+            lambda xi, eta: 0.0,
+        ]
+
+        self.dN_deta = [
+            lambda xi, eta: xi/4 - 1/4,
+            lambda xi, eta: eta - xi/4 - 1/4,
+            lambda xi, eta: eta + xi/4 + 1/4,
+            lambda xi, eta: 1/4 - xi/4,
+            lambda xi, eta: 0.0,
+            lambda xi, eta: -2*eta,
+        ]
+
+        self.xiIntegrationPoints  = [-np.sqrt(1/3), np.sqrt(1/3)]
+        self.etaIntegrationPoints = [-np.sqrt(1/3), np.sqrt(1/3)]
+        self.Weights              = [1, 1]
+
         
 class t3:
     def __init__(self, globalCoord, ID = None):
