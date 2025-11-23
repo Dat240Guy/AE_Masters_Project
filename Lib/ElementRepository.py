@@ -265,30 +265,30 @@ class q6:
         ])
 
         self.N = [
-            lambda xi, eta: (eta*xi)/4 - eta/4 + xi**2/2 - xi/4 - 1/4,
-            lambda xi, eta: eta**2/2 - (eta*xi)/4 - eta/4 + xi**2/2 + xi/4 - 3/4,
-            lambda xi, eta: eta**2/2 + (eta*xi)/4 + eta/4 + xi/4 - 1/4,
-            lambda xi, eta: -(eta*xi)/4 + eta/4 - xi/4 + 1/4,
-            lambda xi, eta: 1 - xi**2,
-            lambda xi, eta: 1 - eta**2,
+            lambda xi, eta: 0.25*xi*(1-xi)*(eta-1),
+            lambda xi, eta: 0.25*eta**2*xi + 0.25*eta**2 - 0.25*eta*(xi**2) - 0.25*eta*xi + 0.25*xi**2 - 0.25,
+            lambda xi, eta: 0.25*eta*(eta+1)*(xi+1),
+            lambda xi, eta: -0.25*(eta+1)*(xi-1),
+            lambda xi, eta: 0.5*(eta-1)*(xi**2-1),
+            lambda xi, eta: -0.5*(eta**2-1)*(xi+1),
         ]
 
         self.dN_dxi = [
-            lambda xi, eta: eta/4 + xi - 1/4,
-            lambda xi, eta: -eta/4 + xi + 1/4,
-            lambda xi, eta: eta/4 + 1/4,
-            lambda xi, eta: -eta/4 - 1/4,
-            lambda xi, eta: -2*xi,
-            lambda xi, eta: 0.0,
+            lambda xi, eta: 0.25*eta-0.5*xi*(eta-1)-0.25,
+            lambda xi, eta: 0.25*eta**2-0.25*eta-0.5*xi*(eta-1),
+            lambda xi, eta: 0.25*eta*(eta+1),
+            lambda xi, eta: -0.25*eta-0.25,
+            lambda xi, eta: xi*(eta-1),
+            lambda xi, eta: 0.5-0.5*eta**2,
         ]
 
         self.dN_deta = [
-            lambda xi, eta: xi/4 - 1/4,
-            lambda xi, eta: eta - xi/4 - 1/4,
-            lambda xi, eta: eta + xi/4 + 1/4,
-            lambda xi, eta: 1/4 - xi/4,
-            lambda xi, eta: 0.0,
-            lambda xi, eta: -2*eta,
+            lambda xi, eta: 0.25*xi*(1-xi),
+            lambda xi, eta: 0.5*eta*(xi+1)-0.25*xi**2-0.25*xi,
+            lambda xi, eta: 0.5*eta*(xi+1)+0.25*xi+0.25,
+            lambda xi, eta: 0.25-0.25*xi,
+            lambda xi, eta: 0.5*xi**2-0.5,
+            lambda xi, eta: -eta*(xi+1),
         ]
 
         self.xiIntegrationPoints  = [-np.sqrt(1/3), np.sqrt(1/3)]
