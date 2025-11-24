@@ -155,7 +155,8 @@ def globalKCalc(KGlobal, dfEle, dfNodes, dfMatProps, elementType):
         # Scatter add into global stiffness matrix
         for a, A in enumerate(glob_indexes):
             for b, B in enumerate(glob_indexes):
-                KGlobal[A, B] += Ke[a, b]
-                KGTemp[A, B] += Ke[a, b]  # handy for debugging if needed
+                if b >= a:
+                    KGlobal[A, B] += Ke[a, b]
+                    KGTemp[A, B] += Ke[a, b]  # handy for debugging if needed
 
     return KGlobal

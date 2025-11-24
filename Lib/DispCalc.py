@@ -39,7 +39,7 @@ def DispCalc(dfNodes, dfEle4, dfEle3, dfEle8, dfEle7, dfForces, dfConstraints, d
         KGlobal = globalKCalc(KGlobal, dfEle8, dfNodes, dfMatProps, "CQ8")
     if isinstance(dfEle7, pd.DataFrame):
         KGlobal = globalKCalc(KGlobal, dfEle7, dfNodes, dfMatProps, "CQ7")
-    # KGlobal = KGlobal + KGlobal.T - np.diag(KGlobal.diagonal())
+    KGlobal = KGlobal + KGlobal.T - np.diag(KGlobal.diagonal())
     
     #Applying boundary Conditions
 
