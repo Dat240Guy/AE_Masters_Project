@@ -25,22 +25,7 @@ if __name__ == "__main__":
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\TensionPlate\PyDFEM\TensionPlate_PyDFEM.dat" 
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\TensionPlate\PyDFEM\TensionPlate_PyDFEM_Refined.dat" 
     
-    ''' Compond Tension Strip Models V2'''
-    #CQUAD4 DFEM
-    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip2\PyDFEM\CQ4\CompoundTensionStripCQ4_4-0000.dat"
-    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip2\PyDFEM\CQ4\CompoundTensionStripCQ4_6-0000.dat"
-    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip2\PyDFEM\CQ4\CompoundTensionStripCQ4_8-0000.dat"
-    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip2\PyDFEM\CQ4\CompoundTensionStripCQ4_10-0000.dat"
-    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip2\PyDFEM\CQ4\CompoundTensionStripCQ4_12-0000.dat"
-    
-    
-    #CQUAD8 DFEM
-    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip2\PyDFEM\CQ8\CompoundTensionStripCQ8_4-0000.dat"
-    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip2\PyDFEM\CQ8\CompoundTensionStripCQ8_6-0000.dat"
-    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip2\PyDFEM\CQ8\CompoundTensionStripCQ8_8-0000.dat"
-    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip2\PyDFEM\CQ8\CompoundTensionStripCQ8_10-0000.dat"
-    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip2\PyDFEM\CQ8\CompoundTensionStripCQ8_12-0000.dat"
-    
+   
     ''' Compond Tension Strip Models V3'''
     #CQ4
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip3\CQ4\CompoundTensionStrip_CQ4_4-0000.dat"
