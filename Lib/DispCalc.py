@@ -81,23 +81,11 @@ import numpy as np
 import pandas as pd
 
 def build_deformed_nodes(dfNodes, dfDisp, scale=1.0):
-    """
-    dfNodes : DataFrame with columns:
-              N  - node ID (int)
-              XYZ - np.array([x,y,z])
-    dfDisp  : DataFrame with columns:
-              NID - node ID (int)
-              U1, U2[, U3] - displacements in global x,y[,z]
-    scale   : visualization scale factor for displacements
 
-    Returns:
-        dfDef : DataFrame like dfNodes but with an extra column 'XYZ_def'
-                containing the displaced coordinates.
-    """
     # Merge nodes with displacements
     df = dfNodes.merge(dfDisp, how="left", left_on="N", right_on="NID")
 
-    # Assume 2D plate: z displacement = 0 if not present
+    
     def make_xyz_def(row):
         x, y, z = row["XYZ"]
         u1 = row.get("U1", 0.0)
@@ -107,7 +95,7 @@ def build_deformed_nodes(dfNodes, dfDisp, scale=1.0):
 
     df["XYZ_def"] = df.apply(make_xyz_def, axis=1)
 
-    # Keep same columns as dfNodes plus XYZ_def
+    
     dfDef = df[["N", "XYZ", "XYZ_def"]].copy()
     return dfDef
 
@@ -121,7 +109,7 @@ def plot_deformed_mesh(dfDefNodes, dfEles, show_undeformed=True):
     nids = dfDefNodes["N"].astype(int).to_numpy()
     nid_to_idx = {nid: i for i, nid in enumerate(nids)}
 
-    # Build triangles from connectivity (same logic as in ContourMesh)
+    
     tris = []
     for dfE in dfEles:
         node_cols = [c for c in dfE.columns if c.startswith("N")]
@@ -129,14 +117,14 @@ def plot_deformed_mesh(dfDefNodes, dfEles, show_undeformed=True):
             nodes_all = [int(row[c]) for c in node_cols if int(row[c]) != 0]
             nnode = len(nodes_all)
 
-            if nnode in (3, 6):       # tri / ctria6
+            if nnode in (3, 6):       # CTRIA
                 corners = nodes_all[:3]
                 if not all(n in nid_to_idx for n in corners):
                     continue
                 i1, i2, i3 = (nid_to_idx[n] for n in corners)
                 tris.append([i1, i2, i3])
 
-            elif nnode in (4, 7, 8):  # quad family
+            elif nnode in (4, 7, 8):  # CQUAD
                 corners = nodes_all[:4]
                 if not all(n in nid_to_idx for n in corners):
                     continue

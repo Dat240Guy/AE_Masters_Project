@@ -48,54 +48,21 @@ class qCalc:
     def dN_deta_vals(self, element, xi, eta):
         return np.array([dN(xi, eta) for dN in element.dN_deta]) 
     
-    # strain displacement relation, relating the derivatives of displacement with resepct to the dofs to the components of strain
-    def B1(self): 
-        B1 = np.array([[1, 0, 0, 0],
-                        [0, 0, 0, 1],
-                        [0, 1, 1, 0]])
-        return B1
-    
-    # Scalling matrix containing the inverse jacobian transposed
-    def B2(self, jacobian):
-        # computting the inverse transposed of the jacobian matrix
-        jinvT = jacobian.invT # responsible for all scalling and rotations
-        B2 = np.zeros([4,4]) # this is the same regardles of element order
-        # Filling in the scalling matrix
-        B2[0:2, 0:2] = jinvT
-        B2[2:4, 2:4] = jinvT
-        return B2
-    
-    def B3(self, xi, eta):
-        e = self.element
-        B3 = np.zeros([4, e.totalDof])
-        B3[0, 0::2] = self.dN_dxi_vals(e, xi, eta)
-        B3[1, 0::2] = self.dN_deta_vals(e, xi, eta)
-        B3[2, 1::2] = self.dN_dxi_vals(e, xi, eta)
-        B3[3, 1::2] = self.dN_deta_vals(e, xi, eta)
-        return B3
 
     def B(self, xi, eta, jacb):
-            """
-            Build the standard 3 x (2*n) B-matrix for 2D plane stress/strain:
 
-                [ εx ]   [ dN1/dx  0   ... dNn/dx   0   ] [u1]
-                [ εy ] = [ 0      dN1/dy ... 0     dNn/dy] [v1]
-                [ γxy]   [ dN1/dy dN1/dx ... dNn/dy dNn/dx] [vn]
-            """
             e = self.element
             n = e.nodeCount
             totalDof = e.totalDof
 
-            # Derivatives w.r.t natural coords
+            # Derivatives 
             dN_dxi  = self.dN_dxi_vals(e, xi, eta)   # (n,)
             dN_deta = self.dN_deta_vals(e, xi, eta)  # (n,)
 
-            # J^{-1} from stored invT (invT = (J^{-1})^T)
-            invJ = jacb.invT.T                       # 2x2
-
-            # [dN/dx; dN/dy] = invJ @ [dN/dξ; dN/dη]
-            grads_nat = np.vstack((dN_dxi, dN_deta))  # 2 x n
-            grads_xy  = invJ @ grads_nat             # 2 x n
+            invJ = jacb.invT.T                       
+            
+            grads_nat = np.vstack((dN_dxi, dN_deta))  
+            grads_xy  = invJ @ grads_nat             
 
             dN_dx = grads_xy[0, :]
             dN_dy = grads_xy[1, :]
@@ -105,9 +72,9 @@ class qCalc:
                 col_u = 2 * i
                 col_v = 2 * i + 1
 
-                B[0, col_u] = dN_dx[i]  # εx = Σ dNi/dx * ui
-                B[1, col_v] = dN_dy[i]  # εy = Σ dNi/dy * vi
-                B[2, col_u] = dN_dy[i]  # γxy = Σ dNi/dy * ui + dNi/dx * vi
+                B[0, col_u] = dN_dx[i]  
+                B[1, col_v] = dN_dy[i]  
+                B[2, col_u] = dN_dy[i]  
                 B[2, col_v] = dN_dx[i]
 
             return B
@@ -256,12 +223,12 @@ class q6:
         self.globalCoord = [x[0:2] for x in globalCoord]
 
         self.localCoord = np.array([
-            [-1.0, -1.0],   # 1
-            [ 1.0, -1.0],   # 2
-            [ 1.0,  1.0],   # 3
-            [-1.0,  1.0],   # 4
-            [ 0.0, -1.0],   # 5 (mid bottom)
-            [ 1.0,  0.0],   # 6 (mid right)
+            [-1.0, -1.0],  
+            [ 1.0, -1.0],  
+            [ 1.0,  1.0],  
+            [-1.0,  1.0],  
+            [ 0.0, -1.0],  
+            [ 1.0,  0.0],  
         ])
 
         self.N = [
@@ -301,23 +268,21 @@ class t3:
         self.ID = ID
         self.nodeCount = 3
         self.totalDof = 2 * self.nodeCount
-        # self.Points = np.array(Points, dtype=float)
+ 
         self.globalCoord = [x[0:2] for x in globalCoord]
 
-        # One-point full integration in area coords (constant strain triangle)
+
         self.xiIntegrationPoints  = [1.0 / 3.0]
         self.etaIntegrationPoints = [1.0 / 3.0]
-        # Area of reference triangle in (xi,eta) is 1/2 → weight = 0.5
+        
         self.Weights = [0.5]
 
-        # Local coordinates of the *nodes* (for stress recovery)
         self.localCoord = np.array([
             [0.0, 0.0],  # N1
             [1.0, 0.0],  # N2
             [0.0, 1.0],  # N3
         ])
 
-    # --- shape functions and natural derivatives ---------------------------
         self.N = [lambda xi, eta: 1 - xi - eta,
                   lambda xi, eta: xi,
                   lambda xi, eta: eta]

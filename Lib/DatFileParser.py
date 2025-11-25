@@ -22,9 +22,7 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
     dfEle7 = None
     dfEle6 = None
 
-    # ----------------------------------------------------
-    # 1. BUILD NODE USAGE DICTIONARY (counts in CQ4 and CQ8)
-    # ----------------------------------------------------
+    # Dictionary of nodal counts
     ndict = {}
     for _, node in dfNodes.iterrows():
         nid = node["N"]
@@ -36,9 +34,7 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
             "totalCount": n4Count + n8Count
         }
 
-    # ----------------------------------------------------
-    # 2. IDENTIFY CQ8 ELEMENTS THAT TOUCH CQ4 (TRANSITION REGION)
-    # ----------------------------------------------------
+    # Finding elements with shared nodes between CQ4 and CQ8
     nCommon = {nid: info for nid, info in ndict.items()
                if info["n8Count"] > 0 and info["n4Count"] > 0}
 
@@ -48,7 +44,7 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
         if any(str(nid) in ele[3:11] for nid in nCommon.keys())
     ]
 
-    # Further filter: must have < 3 "strong CQ4-adjacent" corner nodes
+    
     e8_transition = []
     for ele in e8_candidates:
         cnt = 0
@@ -58,32 +54,29 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
         if cnt <= 3:
             e8_transition.append(ele)
 
-    # ----------------------------------------------------
-    # 3. PROCESS EACH TRANSITION CQ8 ELEMENT → CQ7 or CQ6
-    # ----------------------------------------------------
-    e7_list = []    # list of tuples: (CQ8_full_card, [7 nodes])
-    e6_list = []    # list of tuples: (CQ8_full_card, [6 nodes])
+
+    e7_list = []    
+    e6_list = []    
     nFree = []      # nodes to delete later
     blankCountList = []
     for ele in e8_transition:
-        efull = ele                        # original CQ8 structure
-        nodes = ele[3:11].copy()           # list of 8 nodes [C1,C2,C3,C4,MB,MR,MT,ML]
+        efull = ele                       
+        nodes = ele[3:11].copy()           
 
-        # ---------------------------------------------
-        # 3a. Identify free-edge corner nodes
-        # ---------------------------------------------
+
+        # Identify free-edge corner nodes
+
         freeEdgeCorners = []
         for j, nid in enumerate(nodes[:4]):
             if ndict[int(nid)]["totalCount"] == 2:
                 freeEdgeCorners.append(nid)
 
-        # Determine the free-edge midside node (if present)
+        # Determine the free-edge midside node 
         freeEdgeMid = None
         if len(freeEdgeCorners) >= 2:
             i1 = nodes.index(freeEdgeCorners[0])
             i2 = nodes.index(freeEdgeCorners[1])
 
-            # Corner index pairs → matching midside
             if (i1, i2) in [(0, 1), (1, 0)]:
                 freeEdgeMid = nodes[4]   # bottom mid
             elif (i1, i2) in [(1, 2), (2, 1)]:
@@ -93,9 +86,9 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
             elif (i1, i2) in [(3, 0), (0, 3)]:
                 freeEdgeMid = nodes[7]   # left mid
 
-        # ---------------------------------------------
-        # 3b. Blank nodes: those only appearing once & not free-edge-mid
-        # ---------------------------------------------
+
+        # Blank nodes: Not at free edge
+
         blankCount = 0
         
         for idx, nid in enumerate(nodes):
@@ -105,9 +98,7 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
                 blankCountList.append(nid)
                 nFree.append(nid)
 
-        # ---------------------------------------------
-        # 3c. CASE 1: CQ7 (1 blank)
-        # ---------------------------------------------
+        #CQ7 With one blank node to remove
         if blankCount == 1:
             bidx = nodes.index("Blank")
 
@@ -128,20 +119,13 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
 
             e7_list.append((efull, nodes))
 
-        # ---------------------------------------------
-        # 3d. CASE 2: CQ6 (2 blanks)
-        # ---------------------------------------------
+        # CQ6 With two blank nodes to remove
         elif blankCount == 2:
 
-            # find blank positions
             blank_indices = sorted(i for i, nid in enumerate(nodes) if nid == "Blank")
 
-            # rotate corners until blanks sit at MT(6) and ML(7)
+            # rotate corners to maintain elementorder
             def rotate_element(e):
-                """
-                Rotate CQ8 node list CCW while preserving
-                the relative mapping of midside nodes.
-                """
                 C1, C2, C3, C4, MB, MR, MT, ML = e
 
                 return [
@@ -156,18 +140,16 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
                 nodes = rotate_element(nodes)
 
             if blank_indices != [6, 7]:
-                raise ValueError("Failed to align blanks to MT/ML for CQ6 element")
+                raise ValueError("CQ6 Element rotation failed")
 
             # Remove MT and ML → keep first 6 nodes
             reduced = nodes[:6]
             e6_list.append((efull, reduced))
 
         else:
-            raise ValueError("Invalid number of free nodes: expected 1 or 2.")
+            raise ValueError("Invalid number of free nodes")
 
-    # ----------------------------------------------------
-    # 4. Assemble dfEle7 dataframe
-    # ----------------------------------------------------
+    # DF7 dataframe
     if e7_list:
         e7Final = []
         for efull, nodes7 in e7_list:
@@ -183,9 +165,7 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
             "N5": int, "N6": int, "N7": int
         })
 
-    # ----------------------------------------------------
-    # 5. Assemble dfEle6 dataframe
-    # ----------------------------------------------------
+    # DF6 dataframe
     if e6_list:
         e6Final = []
         for efull, nodes6 in e6_list:
@@ -201,9 +181,7 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
             "N4": int, "N5": int, "N6": int
         })
 
-    # ----------------------------------------------------
-    # 6. Remove free nodes from DFNodes
-    # ----------------------------------------------------
+    # Removing free nodes from dfNodes
     lenBefore = len(dfNodes)
     dfNodes = dfNodes[~dfNodes["N"].isin(nFree)]
 

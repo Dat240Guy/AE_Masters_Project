@@ -2,49 +2,9 @@ import numpy as np
 import ElementRepository as ER
 
 
-def _split_constitutive_2d(C, planeType, E, v):
-    """
-    Split a 2D isotropic constitutive matrix C (3x3) into
-    volumetric and deviatoric parts:
-
-        C = C_vol + C_dev
-
-    where C_vol acts only on the 'mean' normal strain (εx + εy),
-    and C_dev is everything else.
-
-    This is used for selective / reduced integration on Q4 elements.
-    """
-    # Unit vector for volumetric strain direction [εx, εy, γxy]
-    v_vec = np.array([[1.0],
-                      [1.0],
-                      [0.0]])
-    v_norm = v_vec / np.linalg.norm(v_vec)
-    P_vol = v_norm @ v_norm.T  # 3x3 projector onto volumetric strain
-
-    if planeType == "PlaneStress":
-        # Effective 2D bulk-like modulus for plane stress
-        k = E / (1.0 - v)
-    elif planeType == "PlaneStrain":
-        # Effective 2D bulk-like modulus for plane strain
-        k = E / ((1.0 + v) * (1.0 - 2.0 * v))
-    else:
-        raise ValueError("planeType must be 'PlaneStress' or 'PlaneStrain'")
-
-    C_vol = k * P_vol
-    C_dev = C - C_vol
-    return C_vol, C_dev
-
 
 def KeCalc(Points, planeType, E, v, t, ID=None):
-    """
-    Element stiffness matrix calculator.
 
-    - PlaneStress / PlaneStrain handled via ElementRepository.
-    - Q4: selective / reduced integration
-          * deviatoric part fully integrated with 2x2 Gauss
-          * volumetric part integrated with 1 point at (0,0) with weight 4.0
-    - Q7, Q8: original full Gauss integration (unchanged)
-    """
     Points = np.asarray(Points, dtype=float)
 
     # Constitutive matrix
@@ -70,15 +30,10 @@ def KeCalc(Points, planeType, E, v, t, ID=None):
     calc = ER.qCalc(element)
     Ke = np.zeros((element.totalDof, element.totalDof))
 
-    # Original Gauss integration path for Q8/Q7
     for i, xi in enumerate(element.xiIntegrationPoints):
         for j, eta in enumerate(element.etaIntegrationPoints):
             jacb = calc.jacobian(element, xi, eta)
 
-            # eB1 = calc.B1()
-            # eB2 = calc.B2(jacb)
-            # eB3 = calc.B3(xi, eta)
-            # B = eB1 @ eB2 @ eB3
             B = calc.B(xi, eta, jacb)
             Ke += (
                 B.T @ C @ B
@@ -92,12 +47,7 @@ def KeCalc(Points, planeType, E, v, t, ID=None):
 
 
 def globalKCalc(KGlobal, dfEle, dfNodes, dfMatProps, elementType):
-    """
-    Assemble global stiffness matrix from element stiffness matrices.
 
-    This function is unchanged in structure, but now benefits from the
-    selective integration for Q4 via KeCalc() above.
-    """
     dof_per_node = 2
 
     for index, row in dfEle.iterrows():
@@ -157,6 +107,6 @@ def globalKCalc(KGlobal, dfEle, dfNodes, dfMatProps, elementType):
             for b, B in enumerate(glob_indexes):
                 if b >= a:
                     KGlobal[A, B] += Ke[a, b]
-                    KGTemp[A, B] += Ke[a, b]  # handy for debugging if needed
+                    # KGTemp[A, B] += Ke[a, b]  # handy for debugging if needed
 
     return KGlobal

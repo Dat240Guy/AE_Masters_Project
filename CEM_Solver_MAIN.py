@@ -6,7 +6,7 @@ import pandas as pd
 sys.path.append(r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Lib")
 
 from DatFileParser import DatFileParsing
-from StressStrainCalc import StressStrainCalc, rThetaStress
+from StressStrainCalc import StressStrainCalc
 from FringePlotter import Contour
 import DispCalc
 

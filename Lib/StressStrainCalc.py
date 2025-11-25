@@ -2,34 +2,6 @@ import numpy as np
 import pandas as pd
 import ElementRepository as ER
 
-def EleLocalCoordCalc(Points):
-    zDir = np.array([0, 0, 1])
-    xDir = (Points[1] - Points[0]) / np.linalg.norm((Points[1] - Points[0]))
-    yDir = np.cross(xDir, zDir)
-    yDir = yDir/np.linalg.norm(yDir)
-    return xDir, yDir, zDir
-
-def RotMatrix(theta, ds):
-    c = np.cos(theta)
-    s = np.sin(theta)
-    if ds == "3d":
-        rot =  np.array([[c, -s, 0],
-                        [s, c, 0],
-                        [0, 0, 1]])
-    else: 
-        rot =  np.array([[c, -s],
-                        [s, c]])
-    return rot
-
-def stressRotMatrix(theta):
-    c = np.cos(theta)
-    s = np.sin(theta)
-    c2, s2, cs = c*c, s*s, c*s
-    return np.array([
-        [ c2,   s2,   2*cs],
-        [ s2,   c2,  -2*cs],
-        [-cs,   cs,  c2 - s2],
-    ])
 
 def maxPrinCalc(df, Type):
     if Type == "Stress":
@@ -41,7 +13,7 @@ def maxPrinCalc(df, Type):
     S2 = df[Prefix + "2"].values
     S12 = df[Prefix + "12"].values   # engineering shear
 
-    # Convert engineering shear → tensor shear τxy
+    # Convert engineering shear to tensor shear τxy
     tau = S12 / 2.0
 
     # Principal value formula
@@ -49,7 +21,7 @@ def maxPrinCalc(df, Type):
     rad = np.sqrt(((S1 - S2) / 2.0)**2 + tau**2)
 
     df[Prefix + "_max"] = avg + rad
-    df[Prefix + "_min"] = avg - rad  # optional, but helpful
+    df[Prefix + "_min"] = avg - rad 
 
     return df
 
@@ -58,18 +30,7 @@ def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
         C = ER.PlaneStrain(E, v, t).Array
     elif planeType == "PlaneStress":
         C = ER.PlaneStress(E, v, t).Array
-    
-    # eleX, eleY, eleZ = EleLocalCoordCalc(Points)
-    # theta = np.arctan2(eleX[1], eleX[0])
-    # # print("Theta Rotation in Degrees: ", np.degrees(theta))
-    # PointsLocal = np.empty_like(Points)
-    # for i, point in enumerate(Points):
-    #     PointsLocal[i, :] = RotMatrix(-theta, "3d") @ point
-    # theta = 0
-    # dispLocal = np.empty_like(disp)
-    # for i in range(int(len(dispLocal)/2)):
-    #     dispLocal[i*2:i*2+2] = RotMatrix(-theta, "2d") @ disp[i*2:i*2+2]
-        
+            
     if len(Points) == 3:
         element = ER.t3(Points, ID = ID)
     elif len(Points) == 4:
@@ -98,14 +59,12 @@ def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
         jacb = calc.jacobian(element, xiCalc, etaCalc)
         B = calc.B(xiCalc, etaCalc, jacb)
 
-        eps = (B @ disp).reshape(-1)        # [εx, εy, γxy]
-        sig = (C @ (B @ disp)).reshape(-1)  # [σx, σy, τxy]
+        eps = (B @ disp).reshape(-1)   
+        sig = (C @ (B @ disp)).reshape(-1)  
 
         nodalStrain[p, :] += eps
         nodalStress[p, :] += sig
 
-        # Rotation to global if you decide to re-enable theta:
-        # T = stressRotMatrix(-theta)
         nodalStrainGlobal[p, :] += nodalStrain[p, :]
         nodalStressGlobal[p, :] += nodalStress[p, :]
     return nodalStrainGlobal, nodalStressGlobal
@@ -162,65 +121,3 @@ def StressStrainCalc(dfEles, eTypes, dfDisp, dfNodes, planeType, dfMatProps):
     dfStrain = maxPrinCalc(dfStrain, "Strain")
     return dfStress, dfStrain
 
-import numpy as np
-import pandas as pd
-
-def rThetaStress(dfNodes, dfStress, hole_center, hole_node_ids):
-    """
-    Compute σ_rr, σ_θθ, τ_rθ for a set of nodes around a hole.
-
-    Parameters
-    ----------
-    dfNodes : DataFrame
-        Columns: ["N", "XYZ"]
-    dfStress : DataFrame
-        Columns: ["NID", "S1", "S2", "S12"]  (global σx, σy, τxy)
-    hole_center : tuple (xc, yc)
-        Coordinates of the hole center
-    hole_node_ids : list
-        List of node IDs along the hole boundary
-
-    Returns
-    -------
-    dfOut : DataFrame
-        Columns: ["NID", "theta_deg", "sigma_rr", "sigma_tt", "tau_rt"]
-        Sorted in increasing theta
-    """
-
-    xc, yc = hole_center
-    out_rows = []
-
-    for nid in hole_node_ids:
-        # Get node coordinates
-        node_row = dfNodes[dfNodes["N"] == nid]
-        x, y, _ = node_row["XYZ"].values[0]
-
-        # Vector from hole center → node
-        dx = x - xc
-        dy = y - yc
-        r = np.hypot(dx, dy)
-
-        if r == 0:
-            continue  # ignore exactly-at-center points
-
-        # Angle of radial vector (global)
-        theta = np.arctan2(dy, dx)  # radians
-        c = np.cos(theta)
-        s = np.sin(theta)
-
-        # Get FE stress at node (global components)
-        s_row = dfStress[dfStress["NID"] == nid].iloc[0]
-        sx = s_row["S1"]
-        sy = s_row["S2"]
-        txy = s_row["S12"]
-
-        # Transform stresses to (r,θ)
-        sigma_rr = sx*c*c + sy*s*s + 2*txy*s*c
-        sigma_tt = sx*s*s + sy*c*c - 2*txy*s*c
-        tau_rt   = (sy - sx)*s*c + txy*(c*c - s*s)
-
-        out_rows.append([nid, np.degrees(theta), sigma_rr, sigma_tt, tau_rt])
-
-    dfOut = pd.DataFrame(out_rows, columns=["NID", "theta_deg", "sigma_rr", "sigma_tt", "tau_rt"])
-    dfOut = dfOut.sort_values("theta_deg").reset_index(drop=True)
-    return dfOut
