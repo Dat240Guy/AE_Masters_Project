@@ -61,8 +61,8 @@ class qCalc:
 
             invJ = jacb.invT.T                       
             
-            grads_nat = np.vstack((dN_dxi, dN_deta))  
-            grads_xy  = invJ @ grads_nat             
+            grads_nat = np.vstack((dN_dxi, dN_deta))  # derivatives in natural coords
+            grads_xy  = invJ @ grads_nat # multivariable chain rule for derivatives in global coords
 
             dN_dx = grads_xy[0, :]
             dN_dy = grads_xy[1, :]
@@ -258,10 +258,13 @@ class q6:
             lambda xi, eta: -eta*(xi+1),
         ]
 
-        self.xiIntegrationPoints  = [-np.sqrt(1/3), np.sqrt(1/3)]
-        self.etaIntegrationPoints = [-np.sqrt(1/3), np.sqrt(1/3)]
-        self.Weights              = [1, 1]
+        # self.xiIntegrationPoints  = [-np.sqrt(1/3), np.sqrt(1/3)]
+        # self.etaIntegrationPoints = [-np.sqrt(1/3), np.sqrt(1/3)]
+        # self.Weights              = [1, 1]
 
+        self.xiIntegrationPoints = [-np.sqrt(3/5), 0, np.sqrt(3/5)]
+        self.etaIntegrationPoints = [-np.sqrt(3/5), 0, np.sqrt(3/5)]
+        self.Weights = [5/9, 8/9, 5/9]
         
 class t3:
     def __init__(self, globalCoord, ID = None):

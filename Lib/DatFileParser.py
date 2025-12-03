@@ -147,7 +147,7 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
             e6_list.append((efull, reduced))
 
         else:
-            raise ValueError("Invalid number of free nodes")
+            break # not a transition element
 
     # DF7 dataframe
     if e7_list:
@@ -185,7 +185,7 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
     lenBefore = len(dfNodes)
     dfNodes = dfNodes[~dfNodes["N"].isin(nFree)]
 
-    if lenBefore == len(dfNodes) and (dfEle7 is not None or dfEle6 is not None):
+    if lenBefore == len(dfNodes) and ((dfEle7 is not None) or (dfEle6 is not None)):
         print("WARNING: free nodes may not have been removed properly")
 
     return dfEle7, dfEle6, dfNodes

@@ -24,6 +24,8 @@ def KeCalc(Points, planeType, E, v, t, ID=None):
         element = ER.q8(Points, ID=ID)
     elif Points.shape[0] == 7:
         element = ER.q7(Points, ID=ID)
+    elif Points.shape[0] == 6:
+        element = ER.q6(Points, ID=ID)
     else:
         raise ValueError("Element type not recognized for Ke Calculation")
 
@@ -67,6 +69,9 @@ def globalKCalc(KGlobal, dfEle, dfNodes, dfMatProps, elementType):
         elif elementType == "CQ7":
             points = np.zeros((7, 3))
             Ns_idx = [0, 1, 2, 3, 4, 5, 6]      # C1..C4,M1..M3
+        elif elementType == "CQ6":
+            points = np.zeros((6, 3))
+            Ns_idx = [0, 1, 2, 3, 5, 4]      # C1..C4,M1,M2
         else:
             raise ValueError("Element type not recognized")
 
@@ -94,6 +99,8 @@ def globalKCalc(KGlobal, dfEle, dfNodes, dfMatProps, elementType):
             Ns = ["N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8"]
         elif elementType == "CQ7":
             Ns = ["N1", "N2", "N3", "N4", "N5", "N6", "N7"]
+        elif elementType == "CQ6":
+            Ns = ["N1", "N2", "N3", "N4", "N5", "N6"]
 
         # Build list of global DOF indices for this element
         glob_indexes = []

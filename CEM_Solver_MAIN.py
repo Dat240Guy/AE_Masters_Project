@@ -24,7 +24,10 @@ if __name__ == "__main__":
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\HoleInPlate\HoleInPlate-0002.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\TensionPlate\PyDFEM\TensionPlate_PyDFEM.dat" 
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\TensionPlate\PyDFEM\TensionPlate_PyDFEM_Refined.dat" 
-    
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\MixedElementModel\MixedTensionStrip\MixedTensionStrip.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\MixedElementModel\MixedTensionStrip\MixedTensionStrip_FEMAP-0001.dat"
+    File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\MixedElementModel\MixedTensionStrip\MixedTensionStrip_Rotated.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\MixedElementModel\MixedTensionStrip\MixedTensionStrip_FEMAP_Rotated-0001.dat"
    
     ''' Compond Tension Strip Models V3'''
     #CQ4
@@ -42,7 +45,7 @@ if __name__ == "__main__":
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip3\CQ8\CompoundTensionStrip_CQ8_7.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip3\CQ8\CompoundTensionStrip_CQ8_10.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip3\CQ8\CompoundTensionStrip_CQ8_13.dat"
-    File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip3\CQ8\CompoundTensionStrip_CQ8_16.dat"
+    # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip3\CQ8\CompoundTensionStrip_CQ8_16.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip3\CQ8\CompoundTensionStrip_CQ8_18.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip3\CQ8\CompoundTensionStrip_CQ8_22.dat"
     # File = r"C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\!FinalModels\CompoundTensionStrip3\CQ8\CompoundTensionStrip_CQ8_28.dat"
@@ -55,7 +58,7 @@ if __name__ == "__main__":
     dfNodes, dfEle4, dfEle3, dfEle6, dfEle7, dfEle8, dfMatProps, dfForces, dfConstraints = Parsed
     
     ''' Calculating gloabl displacements '''
-    dfDisp = DispCalc.DispCalc(dfNodes, dfEle4, dfEle3, dfEle8, dfEle7, dfForces, dfConstraints, dfMatProps)
+    dfDisp = DispCalc.DispCalc(dfNodes, dfEle4, dfEle3, dfEle8, dfEle7, dfEle6, dfForces, dfConstraints, dfMatProps)
     dfDisp.to_csv(outDir + "\\01_gloabal_displacements.csv")    
     
     ''' Calculating Strain and Stresses '''
@@ -71,7 +74,7 @@ if __name__ == "__main__":
     
     '''Plotting'''
     dfDefNodes = DispCalc.build_deformed_nodes(dfNodes, dfDisp, scale = 50)
-    # DispCalc.plot_deformed_mesh(dfDefNodes, dfEles)
+    DispCalc.plot_deformed_mesh(dfDefNodes, dfEles)
     Contour(dfNodes, dfDisp, ["U1", "U2"], dfEles)
     # # # Contour(dfNodes, dfStrain, ["E1", "E_max"], dfEles)
     # # Contour(dfNodes, dfStress, ["S1", "S2", "S12", "S_max"], dfEles)

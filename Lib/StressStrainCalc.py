@@ -51,13 +51,16 @@ def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
     nodalStrainGlobal = np.zeros((n_nodes, 3)) #Empty arrays to fill
     nodalStressGlobal = np.zeros((n_nodes, 3)) #Empty arrays to fill
     
-    
+    debug = []
     #looping through the xi, eta points in the natrual coord sys to calculate strain/stress 
     # each xi, eta point corresponds to the respective node in the global system
     for  p, (xiCalc, etaCalc) in enumerate(element.localCoord):
         # print("xiCalc", xiCalc, "etaCalc", etaCalc)
         jacb = calc.jacobian(element, xiCalc, etaCalc)
         B = calc.B(xiCalc, etaCalc, jacb)
+        if len(Points) == 7:
+            print(jacb.J)
+            debug.append([ID, p, xiCalc, etaCalc, jacb.J])
 
         eps = (B @ disp).reshape(-1)   
         sig = (C @ (B @ disp)).reshape(-1)  

@@ -3,7 +3,7 @@ import numpy as np
 import re
 from KeCalc import globalKCalc  
 
-def DispCalc(dfNodes, dfEle4, dfEle3, dfEle8, dfEle7, dfForces, dfConstraints, dfMatProps):
+def DispCalc(dfNodes, dfEle4, dfEle3, dfEle8, dfEle7, dfEle6,dfForces, dfConstraints, dfMatProps):
     dof = len(dfNodes)*2 #Total degrees of freedom assuming x, y displacement at each node
     KGlobal = np.zeros((dof, dof)) # Blank global stiffness matrix
     uGlobal = np.zeros((dof, 1))+1 # Blank displacement vector
@@ -39,6 +39,8 @@ def DispCalc(dfNodes, dfEle4, dfEle3, dfEle8, dfEle7, dfForces, dfConstraints, d
         KGlobal = globalKCalc(KGlobal, dfEle8, dfNodes, dfMatProps, "CQ8")
     if isinstance(dfEle7, pd.DataFrame):
         KGlobal = globalKCalc(KGlobal, dfEle7, dfNodes, dfMatProps, "CQ7")
+    if isinstance(dfEle6, pd.DataFrame):
+        KGlobal = globalKCalc(KGlobal, dfEle6, dfNodes, dfMatProps, "CQ6")
     KGlobal = KGlobal + KGlobal.T - np.diag(KGlobal.diagonal())
     
     #Applying boundary Conditions
@@ -77,8 +79,6 @@ def DispCalc(dfNodes, dfEle4, dfEle3, dfEle8, dfEle7, dfForces, dfConstraints, d
     dfDisp = dfDisp.astype({"NID":int, "U1":float, "U2":float}).sort_values(by="NID")
     return dfDisp
 
-import numpy as np
-import pandas as pd
 
 def build_deformed_nodes(dfNodes, dfDisp, scale=1.0):
 
