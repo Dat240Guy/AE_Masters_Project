@@ -17,8 +17,6 @@ def wrap(s, width):
     return trimmed_chunks
 
 def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
-    import pandas as pd
-
     dfEle7 = None
     dfEle6 = None
 
@@ -53,7 +51,7 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
                 cnt += 1
         if cnt <= 3:
             e8_transition.append(ele)
-
+    # e8_transition = e8 #ADD
 
     e7_list = []    
     e6_list = []    
@@ -96,8 +94,11 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
                 nodes[idx] = "Blank"
                 blankCount += 1
                 blankCountList.append(nid)
-                nFree.append(nid)
-
+                nFree.append(int(nid))
+        # For SingleCEle7.dat Model
+        # blankCount = 1
+        # nodes = ["1", "13", "14", "4", "15", "16", "17", "Blank"]
+        
         #CQ7 With one blank node to remove
         if blankCount == 1:
             bidx = nodes.index("Blank")
@@ -164,6 +165,8 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
             "N1": int, "N2": int, "N3": int, "N4": int,
             "N5": int, "N6": int, "N7": int
         })
+        eleStrip = set(dfEle7["Enumber"])
+        dfEle8 = dfEle8[~dfEle8["Enumber"].isin(eleStrip)]
 
     # DF6 dataframe
     if e6_list:
@@ -180,15 +183,18 @@ def transitionEleParsing(dfNodes, dfEle4, dfEle8, e8):
             "N1": int, "N2": int, "N3": int,
             "N4": int, "N5": int, "N6": int
         })
-
+        eleStrip = set(dfEle6["Enumber"])
+        dfEle8 = dfEle8[~dfEle8["Enumber"].isin(eleStrip)]
     # Removing free nodes from dfNodes
     lenBefore = len(dfNodes)
     dfNodes = dfNodes[~dfNodes["N"].isin(nFree)]
-
+    dfNodes.reset_index(drop=True, inplace=True)
+    dfEle8.reset_index(drop=True, inplace=True)
     if lenBefore == len(dfNodes) and ((dfEle7 is not None) or (dfEle6 is not None)):
         print("WARNING: free nodes may not have been removed properly")
 
-    return dfEle7, dfEle6, dfNodes
+    
+    return dfEle8, dfEle7, dfEle6, dfNodes
 
 
 def DatFileParsing(dat):
@@ -224,8 +230,8 @@ def DatFileParsing(dat):
     if len(dfEle8) == 0:
         dfEle8, dfEle7, dfEle6 = None, None, None
     else:
-        dfEle7, dfEle6, dfNodes = transitionEleParsing(dfNodes, dfEle4, dfEle8, e8)
-    
+        dfEle8, dfEle7, dfEle6, dfNodes = transitionEleParsing(dfNodes, dfEle4, dfEle8, e8)
+        
     if len(dfEle3) == 0: dfEle3 = None
     
     #processing materials

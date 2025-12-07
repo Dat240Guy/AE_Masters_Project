@@ -3,8 +3,9 @@ import numpy as np
 import re
 from KeCalc import globalKCalc  
 
-def DispCalc(dfNodes, dfEle4, dfEle3, dfEle8, dfEle7, dfEle6,dfForces, dfConstraints, dfMatProps):
+def DispCalc(dfNodes, dfEle4, dfEle3, dfEle8, dfEle7, dfEle6, dfForces, dfConstraints, dfMatProps):
     dof = len(dfNodes)*2 #Total degrees of freedom assuming x, y displacement at each node
+    print("dof", dof)
     KGlobal = np.zeros((dof, dof)) # Blank global stiffness matrix
     uGlobal = np.zeros((dof, 1))+1 # Blank displacement vector
     fGlobal = np.zeros((dof, 1)) # Blank force vector

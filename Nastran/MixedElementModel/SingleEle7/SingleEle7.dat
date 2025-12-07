@@ -1,0 +1,68 @@
+INIT MASTER(S)
+NASTRAN SYSTEM(442)=-1,SYSTEM(319)=1
+ID MixedEl,FEMAP
+SOL SESTATIC
+CEND
+  TITLE = Simcenter Nastran Static Analysis Set
+  ECHO = NONE
+  DISPLACEMENT(PLOT) = ALL
+  SPCFORCE(PLOT) = ALL
+  OLOAD(PLOT) = ALL
+  FORCE(PLOT,CORNER) = ALL
+  STRESS(PLOT,CORNER) = ALL
+  SPC = 1
+  LOAD = 1
+BEGIN BULK
+$ ***************************************************************************
+$   Written by : Femap
+$   Version    : 2412.0
+$   Translator : Simcenter Nastran
+$   From Model : C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\MixedElementModel\SingleEle7\SingleEle7.modfem
+$   Date       : Tue Dec  2 22:00:59 2025
+$   Output To  : C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\MixedElementModel\SingleEle7\
+$ ***************************************************************************
+$
+PARAM,PRGPST,NO
+PARAM,POST,0
+PARAM,OGEOM,NO
+PARAM,AUTOSPC,YES
+PARAM,K6ROT,100.
+PARAM,GRDPNT,0
+CORD2C         1       0      0.      0.      0.      0.      0.      1.+FEMAPC1
++FEMAPC1      1.      0.      1.        
+CORD2S         2       0      0.      0.      0.      0.      0.      1.+FEMAPC2
++FEMAPC2      1.      0.      1.        
+$ Femap Load Set 1 : Untitled
+FORCE          1      20       0      1.1666.667      0.      0.
+FORCE          1      21       0      1.1666.667      0.      0.
+FORCE          1      24       0      1.6666.667      0.      0.
+$ Femap Constraint Set 1 : Untitled
+SPC1           1  123456      11
+SPC1           1  123456      12
+$ Femap Property 1 : MEMBRANE Property
+PSHELL         1       1     .25                                      0.
+$ Femap Material 1 : 2024-T351 Al Plate: t = 0.25 to 0.5 inches
+MAT1           1  1.07+7             .332.5906-4 1.255-5     70.        +       
++         42000.  40000.  38000.
+MAT4           1.0016435  83.0762.5906-4                        
+GRID           1       0     -1.     -1.      0.       0
+GRID           4       0     -1.      1.      0.       0
+GRID          11       0     -3.      1.      0.       0
+GRID          12       0     -3.     -1.      0.       0
+GRID          13       0      1.     -1.      0.       0
+GRID          14       0      1.      1.      0.       0
+GRID          15       0      0.     -1.      0.       0
+GRID          16       0      1.      0.      0.       0
+GRID          17       0      0.      1.      0.       0
+GRID          18       0     -1.      0.      0.       0
+GRID          20       0      3.     -1.      0.       0
+GRID          21       0      3.      1.      0.       0
+GRID          23       0      2.     -1.      0.       0
+GRID          24       0      3.      0.      0.       0
+GRID          25       0      2.      1.      0.       0
+CQUAD4         2       1       1       4      11      12                
+CQUAD8         3       1       1      13      14       4      15      16+       
++             17      18                                                
+CQUAD8         4       1      13      20      21      14      23      24+       
++             25      16                                                
+ENDDATA 732c86b3

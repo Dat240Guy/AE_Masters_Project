@@ -35,7 +35,9 @@ def KeCalc(Points, planeType, E, v, t, ID=None):
     for i, xi in enumerate(element.xiIntegrationPoints):
         for j, eta in enumerate(element.etaIntegrationPoints):
             jacb = calc.jacobian(element, xi, eta)
-
+            # if len(Points) == 7:
+            #     print("KeCalc")
+            #     print(jacb.J)
             B = calc.B(xi, eta, jacb)
             Ke += (
                 B.T @ C @ B

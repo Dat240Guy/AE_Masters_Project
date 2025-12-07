@@ -25,7 +25,7 @@ def build_triangles_from_elements(df_nodes_merged, dfEles):
             nnode = len(nodes_all)
 
             # CTRIAS
-            if nnode in (3, 6):
+            if nnode in (2, 3):
                 
                 corners = nodes_all[:3]
                 
@@ -35,7 +35,7 @@ def build_triangles_from_elements(df_nodes_merged, dfEles):
                 triangles.append([i1, i2, i3])
 
             # CQUADS
-            elif nnode in (4, 7, 8):
+            elif nnode in (4, 6, 7, 8):
                 corners = nodes_all[:4]
                 if not all(n in nid_to_idx for n in corners):
                     continue
@@ -112,11 +112,36 @@ def Contour(dfNodes, dfValues, Components, dfEles, Averaging="Nodal"):
 
         plt.figure()
         plt.tricontourf(triang, Z, levels=14, cmap="jet")
+        # plt.tricontourf(triang, Z, levels = 10, cmap= "jet", 
+        #                 vmin = 0, vmax = 20000)
         plt.title(f"{comp} ({Averaging} Avg)")
         plt.gca().ticklabel_format(style="plain")
         plt.colorbar()
         plt.axis("equal")
         plt.show(block=True)
+
+        # Z = Zfields[comp]
+
+        # plt.figure()
+
+        # contour = plt.tricontourf(
+        #     triang, Z,
+        #     levels=10,
+        #     cmap="jet",
+        #     vmin=0, vmax=20000
+        # )
+
+        # plt.title(f"{comp} ({Averaging} Avg)")
+        # plt.gca().ticklabel_format(style="plain")
+
+        # cbar = plt.colorbar(contour)
+
+        # # Disable scientific notation offsets
+        # cbar.formatter.set_useOffset(False)
+        # cbar.update_ticks()
+
+        # plt.axis("equal")
+        # plt.show(block=True)
 
 
 

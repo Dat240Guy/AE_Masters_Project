@@ -56,11 +56,16 @@ def SSEleCalc(Points, disp, planeType, E, v, t, ID = None):
     # each xi, eta point corresponds to the respective node in the global system
     for  p, (xiCalc, etaCalc) in enumerate(element.localCoord):
         # print("xiCalc", xiCalc, "etaCalc", etaCalc)
+        # For debugging
+        # xiCal = 0
+        # etaCalc = 0
+        #--------
         jacb = calc.jacobian(element, xiCalc, etaCalc)
         B = calc.B(xiCalc, etaCalc, jacb)
-        if len(Points) == 7:
-            print(jacb.J)
-            debug.append([ID, p, xiCalc, etaCalc, jacb.J])
+        # if len(Points) == 7:
+        #     print("StressStrainCalc")
+        #     print(jacb.inv)
+        #     debug.append([ID, p, xiCalc, etaCalc, jacb.J])
 
         eps = (B @ disp).reshape(-1)   
         sig = (C @ (B @ disp)).reshape(-1)  
@@ -90,6 +95,7 @@ def StressStrainCalc(dfEles, eTypes, dfDisp, dfNodes, planeType, dfMatProps):
             elif elementType == "CQ7":
                 points = np.zeros((7, 3))
                 Ns = [0, 1, 2, 3, 4, 5, 6]
+                # Ns = [0, 2, 4, 6, 1, 3, 5]  # C1,C2,C3,C4,M1,M2,M3
             elif elementType == "CQ6":
                 points = np.zeros((6, 3))
                 Ns = [0, 1, 2, 3, 4, 5]

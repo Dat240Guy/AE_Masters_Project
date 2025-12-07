@@ -1,0 +1,190 @@
+INIT MASTER(S)
+NASTRAN SYSTEM(442)=-1,SYSTEM(319)=1
+ID MixedEl,FEMAP
+SOL SESTATIC
+CEND
+  TITLE = Simcenter Nastran Static Analysis Set
+  ECHO = NONE
+  DISPLACEMENT(PUNCH) = ALL
+  SPCFORCE(PUNCH) = ALL
+  OLOAD(PUNCH) = ALL
+  FORCE(PUNCH,CORNER) = ALL
+  STRESS(PUNCH,CORNER) = ALL
+  SPC = 1
+  LOAD = 1
+BEGIN BULK
+$ ***************************************************************************
+$   Written by : Femap
+$   Version    : 2412.0
+$   Translator : Simcenter Nastran
+$   From Model : C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\MixedElementModel\MixedTensionStrip\MixedTensionStrip_ALIGNED.modfem
+$   Date       : Tue Dec  2 21:42:31 2025
+$   Output To  : C:\Documents\Grad_School\!AE_Masters_Project\AE_Masters_Project\Nastran\MixedElementModel\MixedTensionStrip\
+$ ***************************************************************************
+$
+PARAM,PRGPST,NO
+PARAM,POST,-1
+PARAM,OGEOM,NO
+PARAM,AUTOSPC,YES
+PARAM,K6ROT,100.
+PARAM,GRDPNT,0
+CORD2C         1       0      0.      0.      0.      0.      0.      1.+FEMAPC1
++FEMAPC1      1.      0.      1.        
+CORD2S         2       0      0.      0.      0.      0.      0.      1.+FEMAPC2
++FEMAPC2      1.      0.      1.        
+$ Femap Load Set 1 : Untitled
+FORCE          1      30       0      1.416.6667      0.      0.
+FORCE          1      31       0      1.833.3333      0.      0.
+FORCE          1      32       0      1.833.3333      0.      0.
+FORCE          1      33       0      1.833.3333      0.      0.
+FORCE          1      34       0      1.416.6667      0.      0.
+FORCE          1      62       0      1.1666.667      0.      0.
+FORCE          1      71       0      1.1666.667      0.      0.
+FORCE          1      80       0      1.1666.667      0.      0.
+FORCE          1      89       0      1.1666.667      0.      0.
+$ Femap Constraint Set 1 : Untitled
+SPC1           1       1       1
+SPC1           1       1      13
+SPC1           1       1      14
+SPC1           1  123456      15
+SPC1           1       1      16
+$ Femap Property 1 : MEMBRANE Property
+PSHELL         1       1     .25                                      0.
+$ Femap Material 1 : 2024-T351 Al Plate: t = 0.25 to 0.5 inches
+MAT1           1  1.07+7             .332.5906-4 1.255-5     70.        +       
++         42000.  40000.  38000.
+MAT4           1.0016435  83.0762.5906-4                        
+GRID           1       0      0.      0.      0.       0
+GRID           2       0     .25      0.      0.       0
+GRID           3       0      .5      0.      0.       0
+GRID           4       0     .75      0.      0.       0
+GRID           5       0      1.      0.      0.       0
+GRID           6       0      1.     .25      0.       0
+GRID           7       0      1.      .5      0.       0
+GRID           8       0      1.     .75      0.       0
+GRID           9       0      1.      1.      0.       0
+GRID          10       0     .75      1.      0.       0
+GRID          11       0      .5      1.      0.       0
+GRID          12       0     .25      1.      0.       0
+GRID          13       0      0.      1.      0.       0
+GRID          14       0      0.     .75      0.       0
+GRID          15       0      0.      .5      0.       0
+GRID          16       0      0.     .25      0.       0
+GRID          17       0     .25     .25      0.       0
+GRID          18       0      .5     .25      0.       0
+GRID          19       0     .75     .25      0.       0
+GRID          20       0     .25      .5      0.       0
+GRID          21       0      .5      .5      0.       0
+GRID          22       0     .75      .5      0.       0
+GRID          23       0     .25     .75      0.       0
+GRID          24       0      .5     .75      0.       0
+GRID          25       0     .75     .75      0.       0
+GRID          27       0    1.25      0.      0.       0
+GRID          28       0     1.5      0.      0.       0
+GRID          29       0    1.75      0.      0.       0
+GRID          30       0      2.      0.      0.       0
+GRID          31       0      2.     .25      0.       0
+GRID          32       0      2.      .5      0.       0
+GRID          33       0      2.     .75      0.       0
+GRID          34       0      2.      1.      0.       0
+GRID          35       0    1.75      1.      0.       0
+GRID          36       0     1.5      1.      0.       0
+GRID          37       0    1.25      1.      0.       0
+GRID          42       0    1.25     .25      0.       0
+GRID          43       0     1.5     .25      0.       0
+GRID          44       0    1.75     .25      0.       0
+GRID          45       0    1.25      .5      0.       0
+GRID          46       0     1.5      .5      0.       0
+GRID          47       0    1.75      .5      0.       0
+GRID          48       0    1.25     .75      0.       0
+GRID          49       0     1.5     .75      0.       0
+GRID          50       0    1.75     .75      0.       0
+GRID          51       0   1.125      0.      0.       0
+GRID          52       0    1.25    .125      0.       0
+GRID          53       0   1.125     .25      0.       0
+GRID          54       0      1.    .125      0.       0
+GRID          55       0   1.375      0.      0.       0
+GRID          56       0     1.5    .125      0.       0
+GRID          57       0   1.375     .25      0.       0
+GRID          58       0   1.625      0.      0.       0
+GRID          59       0    1.75    .125      0.       0
+GRID          60       0   1.625     .25      0.       0
+GRID          61       0   1.875      0.      0.       0
+GRID          62       0      2.    .125      0.       0
+GRID          63       0   1.875     .25      0.       0
+GRID          64       0    1.25    .375      0.       0
+GRID          65       0   1.125      .5      0.       0
+GRID          66       0      1.    .375      0.       0
+GRID          67       0     1.5    .375      0.       0
+GRID          68       0   1.375      .5      0.       0
+GRID          69       0    1.75    .375      0.       0
+GRID          70       0   1.625      .5      0.       0
+GRID          71       0      2.    .375      0.       0
+GRID          72       0   1.875      .5      0.       0
+GRID          73       0    1.25    .625      0.       0
+GRID          74       0   1.125     .75      0.       0
+GRID          75       0      1.    .625      0.       0
+GRID          76       0     1.5    .625      0.       0
+GRID          77       0   1.375     .75      0.       0
+GRID          78       0    1.75    .625      0.       0
+GRID          79       0   1.625     .75      0.       0
+GRID          80       0      2.    .625      0.       0
+GRID          81       0   1.875     .75      0.       0
+GRID          82       0    1.25    .875      0.       0
+GRID          83       0   1.125      1.      0.       0
+GRID          84       0      1.    .875      0.       0
+GRID          85       0     1.5    .875      0.       0
+GRID          86       0   1.375      1.      0.       0
+GRID          87       0    1.75    .875      0.       0
+GRID          88       0   1.625      1.      0.       0
+GRID          89       0      2.    .875      0.       0
+GRID          90       0   1.875      1.      0.       0
+CQUAD4         1       1       1       2      17      16                
+CQUAD4         2       1       2       3      18      17                
+CQUAD4         3       1       3       4      19      18                
+CQUAD4         4       1       4       5       6      19                
+CQUAD4         5       1      16      17      20      15                
+CQUAD4         6       1      17      18      21      20                
+CQUAD4         7       1      18      19      22      21                
+CQUAD4         8       1      19       6       7      22                
+CQUAD4         9       1      15      20      23      14                
+CQUAD4        10       1      20      21      24      23                
+CQUAD4        11       1      21      22      25      24                
+CQUAD4        12       1      22       7       8      25                
+CQUAD4        13       1      14      23      12      13                
+CQUAD4        14       1      23      24      11      12                
+CQUAD4        15       1      24      25      10      11                
+CQUAD4        16       1      25       8       9      10                
+CQUAD8        17       1       5      27      42       6      51      52+       
++             53      54                                                
+CQUAD8        18       1      27      28      43      42      55      56+       
++             57      52                                                
+CQUAD8        19       1      28      29      44      43      58      59+       
++             60      56                                                
+CQUAD8        20       1      29      30      31      44      61      62+       
++             63      59                                                
+CQUAD8        21       1       6      42      45       7      53      64+       
++             65      66                                                
+CQUAD8        22       1      42      43      46      45      57      67+       
++             68      64                                                
+CQUAD8        23       1      43      44      47      46      60      69+       
++             70      67                                                
+CQUAD8        24       1      44      31      32      47      63      71+       
++             72      69                                                
+CQUAD8        25       1       7      45      48       8      65      73+       
++             74      75                                                
+CQUAD8        26       1      45      46      49      48      68      76+       
++             77      73                                                
+CQUAD8        27       1      46      47      50      49      70      78+       
++             79      76                                                
+CQUAD8        28       1      47      32      33      50      72      80+       
++             81      78                                                
+CQUAD8        29       1       8      48      37       9      74      82+       
++             83      84                                                
+CQUAD8        30       1      48      49      36      37      77      85+       
++             86      82                                                
+CQUAD8        31       1      49      50      35      36      79      87+       
++             88      85                                                
+CQUAD8        32       1      50      33      34      35      81      89+       
++             90      87                                                
+ENDDATA db1be089
